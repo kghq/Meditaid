@@ -103,7 +103,6 @@ class TimerManager {
         guard isRunning else { return }
         
         isRunning = false
-        
         singleRun = startTapTime.timeIntervalSinceNow
         compoundedRuns += singleRun
         
@@ -127,6 +126,8 @@ class TimerManager {
         
         controlDate = .now
         compoundedRuns = TimeInterval()
+        hasStarted = false
+        isRunning = false
         
         // Look and Feel
         buttonHaptics.impactOccurred()

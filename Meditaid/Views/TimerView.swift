@@ -12,6 +12,14 @@ struct TimerView: View {
     @Environment(\.scenePhase) private var scenePhase
     
     @State private var timerManager = TimerManager()
+    
+//    var timerCountingRange: ClosedRange<Date> {
+//        if timerManager.isRunning {
+//            return (timerManager.controlDate + timerManager.compoundedRuns)...Date.distantFuture
+//        } else {
+//            return (Date.now + timerManager.compoundedRuns)...Date.distantFuture
+//        }
+//    }
 
     var body: some View {
         VStack(spacing: 30) {
@@ -24,6 +32,7 @@ struct TimerView: View {
                         .monospacedDigit()
                         .font(.system(size: 60, weight: .medium))
                 }
+
                 
                 Spacer()
             }
@@ -110,3 +119,7 @@ struct ControlButtons: View {
 //                    }
 //                }
 //            }
+
+//Text(context.date, format: .timer(countingUpIn: (timerManager.isRunning ?
+//    (timerManager.controlDate + timerManager.compoundedRuns) : (Date.now + timerManager.compoundedRuns))..<Date.distantFuture
+//))
