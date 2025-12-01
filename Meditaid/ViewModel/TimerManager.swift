@@ -11,7 +11,7 @@ import Observation
 import SwiftUI
 
 @Observable
-class Stopwatch {
+class TimerManager {
     
     // Settings
     var settings: Settings
@@ -54,8 +54,16 @@ class Stopwatch {
             return hideStatusBarOnTap
         }
     }
-
-    let intervalHaptics = UIImpactFeedbackGenerator(style: .heavy)
+    
+    var timerCountingRange: Range<Date> {
+        if isRunning {
+            return (controlDate + compoundedRuns)..<Date.distantFuture
+        } else {
+            return (Date.now + compoundedRuns)..<Date.distantFuture
+        }
+    }
+    
+    let buttonHaptics = UIImpactFeedbackGenerator(style: .medium)
     
     // Start
     func start() {
@@ -67,6 +75,9 @@ class Stopwatch {
         
         controlDate = .now
         startTapTime = .now
+        
+        // Look and Feel
+        buttonHaptics.impactOccurred()
         
         // HealthKit
         sessionDates == nil ? sessionDates = [.now] : sessionDates?.append(.now)
@@ -95,6 +106,11 @@ class Stopwatch {
         singleRun = startTapTime.timeIntervalSinceNow
         compoundedRuns += singleRun
         
+        // Look and Feel
+        buttonHaptics.impactOccurred()
+        autoHide?.cancel()
+        handleButtonHide()
+        
         // HealthKit
         sessionDates?.append(.now)
         
@@ -107,8 +123,14 @@ class Stopwatch {
 
     // End
     func end() {
+        
         controlDate = .now
         compoundedRuns = TimeInterval()
+        
+        // Look and Feel
+        buttonHaptics.impactOccurred()
+        autoHide?.cancel()
+        hideStatusBarOnTap = false
         
         // HealthKit
         if let sessionDates = sessionDates {
@@ -135,6 +157,12 @@ class Stopwatch {
     func reset() {
         controlDate = .now
         compoundedRuns = TimeInterval()
+    }
+    
+    // Toggle Settings
+    func toggleSettings() {
+        showingSettings.toggle()
+        hideStatusBarOnTap = false
     }
     
     // Hiding StatusBar
