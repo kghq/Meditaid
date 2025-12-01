@@ -24,6 +24,15 @@ class TimerManager {
     var startTapTime = Date()
     var isRunning = false
     var hasStarted = false
+    
+    // Display
+    var timerCountingRange: Range<Date> {
+        if isRunning {
+            return (controlDate + compoundedRuns)..<Date.distantFuture
+        } else {
+            return (Date.now + compoundedRuns)..<Date.distantFuture
+        }
+    }
 
     // Healthkit
     var healthKitManager = HealthKitManager()
@@ -52,14 +61,6 @@ class TimerManager {
             return !hideStatusBarOnTap
         } else {
             return hideStatusBarOnTap
-        }
-    }
-    
-    var timerCountingRange: Range<Date> {
-        if isRunning {
-            return (controlDate + compoundedRuns)..<Date.distantFuture
-        } else {
-            return (Date.now + compoundedRuns)..<Date.distantFuture
         }
     }
     

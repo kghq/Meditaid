@@ -19,7 +19,7 @@ struct TimerView: View {
                 
                 Spacer()
                 
-                TimelineView(.periodic(from: timerManager.controlDate, by: 1.0)) { context in
+                TimelineView(.animation) { context in
                     Text(context.date, format: .timer(countingUpIn: timerManager.timerCountingRange))
                         .monospacedDigit()
                         .font(.system(size: 60, weight: .medium))
