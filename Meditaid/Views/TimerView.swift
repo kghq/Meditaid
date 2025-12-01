@@ -110,23 +110,28 @@ struct TimerView: View {
     }
     
     private func handleScreenTap() {
+        
         autoHide?.cancel()
         
         if timerManager.hasStarted {
             withAnimation(.default) {
                 timerManager.hideStatusBarOnTap.toggle()
             }
+            
+            guard autoHide == nil else { return }
+            
             autoHide = Task {
                 do {
                     try await Task.sleep(for: .seconds(3))
                     
-                    guard !Task.isCancelled else { return }
-                    
                     withAnimation(.default) {
                         timerManager.hideStatusBarOnTap.toggle()
                     }
+                    
+                    autoHide = nil
                 } catch {
                     print(error.localizedDescription)
+                    autoHide = nil
                 }
             }
         } else {
