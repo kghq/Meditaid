@@ -9,17 +9,12 @@ import HealthKit
 import SwiftUI
 
 struct TimerView: View {
-    @Environment(\.scenePhase) private var scenePhase
     
     @State private var timerManager = TimerManager()
     
-//    var timerCountingRange: ClosedRange<Date> {
-//        if timerManager.isRunning {
-//            return (timerManager.controlDate + timerManager.compoundedRuns)...Date.distantFuture
-//        } else {
-//            return (Date.now + timerManager.compoundedRuns)...Date.distantFuture
-//        }
-//    }
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var autoHide: Task<Void, Never>? = nil // managing the hiding of status bar
+    private let buttonHaptics = UIImpactFeedbackGenerator(style: .medium)
 
     var body: some View {
         VStack(spacing: 30) {
@@ -42,11 +37,58 @@ struct TimerView: View {
                     .contentShape(Rectangle())
             )
             .onTapGesture {
-                timerManager.handleScreenTap()
+                handleScreenTap()
             }
             
             // Buttons
-            ControlButtons(timerManager: $timerManager)
+            ZStack {
+                HStack {
+                    
+                    // End
+                    Button("End") {
+                        timerManager.end()
+                        buttonHaptics.impactOccurred()
+                        autoHide?.cancel()
+                        timerManager.hideStatusBarOnTap = false
+                    }
+                    .disabled(!timerManager.hasStarted)
+                    .font(.title3)
+                    .bold()
+                    .foregroundStyle(timerManager.hasStarted ? .red.opacity(timerManager.isRunning ? 0.7 : 0.8) : .secondary)
+                    .padding()
+    //                Button("Reset") {
+    //                    timerManager.reset()
+    //                    buttonHaptics.impactOccurred()
+    //                    autoHide?.cancel()
+    //                    hideStatusBarOnTap = false
+    //                }
+
+                    Spacer()
+                    
+                    // Start / Pause
+                    Button(timerManager.isRunning ? "Pause" : (timerManager.hasStarted ? "Resume" : "Start")) {
+                        timerManager.isRunning ? timerManager.pause() : timerManager.start()
+                        buttonHaptics.impactOccurred()
+                        autoHide?.cancel()
+                        handleButtonHide()
+                    }
+                    .font(.title3)
+                    .bold()
+                    .foregroundStyle(timerManager.hasStarted ? .blue.opacity(timerManager.isRunning ? 0.7 : 0.8) : .green.opacity(0.9))
+                    .padding()
+                }
+                
+                // Settings
+                Button("Settings") {
+                    timerManager.toggleSettings()
+                    buttonHaptics.impactOccurred()
+                }
+                .disabled(timerManager.hasStarted)
+                .font(.title3)
+                .bold()
+                .opacity(timerManager.hasStarted ? 0.0 : 0.7)
+                .padding()
+            }
         }
         .padding()
         .preferredColorScheme(.dark)
@@ -61,47 +103,36 @@ struct TimerView: View {
             timerManager.settings.healthKitEnabled = timerManager.healthKitManager.checkAuthorization()
         }
     }
-}
-
-struct ControlButtons: View {
     
-    @Binding var timerManager: TimerManager
+    // Hiding StatusBar
+    private func handleButtonHide() {
+        timerManager.hideStatusBarOnTap = false
+    }
     
-    var body: some View {
-        ZStack {
-            HStack {
-                
-                // End
-                Button("End") {
-                    timerManager.end()
-                }
-                .disabled(!timerManager.hasStarted)
-                .font(.title3)
-                .bold()
-                .foregroundStyle(timerManager.hasStarted ? .red.opacity(timerManager.isRunning ? 0.7 : 0.8) : .secondary)
-                .padding()
-
-                Spacer()
-                
-                // Start / Pause
-                Button(timerManager.isRunning ? "Pause" : (timerManager.hasStarted ? "Resume" : "Start")) {
-                    timerManager.isRunning ? timerManager.pause() : timerManager.start()
-                }
-                .font(.title3)
-                .bold()
-                .foregroundStyle(timerManager.hasStarted ? .blue.opacity(timerManager.isRunning ? 0.7 : 0.8) : .green.opacity(0.9))
-                .padding()
+    private func handleScreenTap() {
+        autoHide?.cancel()
+        
+        if timerManager.hasStarted {
+            withAnimation(.default) {
+                timerManager.hideStatusBarOnTap.toggle()
             }
-            
-            // Settings
-            Button("Settings") {
-                timerManager.toggleSettings()
+            autoHide = Task {
+                do {
+                    try await Task.sleep(for: .seconds(3))
+                    
+                    guard !Task.isCancelled else { return }
+                    
+                    withAnimation(.default) {
+                        timerManager.hideStatusBarOnTap.toggle()
+                    }
+                } catch {
+                    print(error.localizedDescription)
+                }
             }
-            .disabled(timerManager.hasStarted)
-            .font(.title3)
-            .bold()
-            .opacity(timerManager.hasStarted ? 0.0 : 0.7)
-            .padding()
+        } else {
+            withAnimation(.default) {
+                timerManager.hideStatusBarOnTap.toggle()
+            }
         }
     }
 }

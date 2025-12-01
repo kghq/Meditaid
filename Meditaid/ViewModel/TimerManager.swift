@@ -18,24 +18,9 @@ class TimerManager {
     var showingSettings = false
     
     // Clock
-    var controlDate = Date.now
-    var compoundedRuns = TimeInterval()
-    var singleRun = TimeInterval()
-    var startTapTime = Date()
     var isRunning = false
     var hasStarted = false
     
-    // Display
-    var timerCountingRange: Range<Date> {
-        if isRunning {
-            return (controlDate + compoundedRuns)..<Date.distantFuture
-        } else {
-            return (Date.now + compoundedRuns)..<Date.distantFuture
-        }
-    }
-
-    // Healthkit
-    var healthKitManager = HealthKitManager()
     var sessionDates: [Date]? {
         didSet {
             guard let sessionDates else { return }
@@ -49,13 +34,37 @@ class TimerManager {
         }
     }
     
+    var pauses = [TimeInterval]()
+    
+    var compoundedPauses: TimeInterval {
+        var compPauses = TimeInterval.zero
+        for pause in pauses {
+            compPauses += pause
+        }
+        return compPauses
+    }
+    
+    // Display
+    var timerCountingRange: Range<Date> {
+        guard let startTime = sessionDates?.first else { return Date.now..<Date.distantFuture }
+        
+        let adjustedStartDate = startTime.addingTimeInterval(compoundedPauses)
+        
+        if isRunning {
+            return adjustedStartDate..<Date.distantFuture
+        } else {
+            return Date.now + startTime.timeIntervalSince(sessionDates?.last ?? .now) + compoundedPauses..<Date.distantFuture
+        }
+    }
+
+    // Healthkit
+    var healthKitManager = HealthKitManager()
+    
     // ActivityKit
     private var activity: Activity<TimerAttributes>? = nil
-    var pauses = [TimeInterval]()
     
     // Hiding Status Bar
     var hideStatusBarOnTap = false
-    var autoHide: Task<Void, Never>? = nil
     var isStatusBarHidden: Bool {
         if hasStarted {
             return !hideStatusBarOnTap
@@ -64,23 +73,11 @@ class TimerManager {
         }
     }
     
-    let buttonHaptics = UIImpactFeedbackGenerator(style: .medium)
-    
     // Start
     func start() {
         
         guard !isRunning else { return }
         
-        isRunning = true
-        hasStarted = true
-        
-        controlDate = .now
-        startTapTime = .now
-        
-        // Look and Feel
-        buttonHaptics.impactOccurred()
-        
-        // HealthKit
         sessionDates == nil ? sessionDates = [.now] : sessionDates?.append(.now)
         
         // ActivityKit
@@ -88,13 +85,22 @@ class TimerManager {
             let attributes = TimerAttributes()
             let initialState = TimerAttributes.ContentState(startDate: .now, pauses: pauses, isRunning: true)
             let content = ActivityContent(state: initialState, staleDate: nil)
-            activity = try? Activity.request(attributes: attributes, content: content, pushType: nil)
+            print("test2")
+            do {
+                activity = try Activity.request(attributes: attributes, content: content, pushType: nil)
+            } catch {
+                print(error.localizedDescription)
+                print("test")
+            }
         } else {
             Task {
                 let updatedState = TimerAttributes.ContentState(startDate: sessionDates?[0] ?? .now, pauses: pauses, isRunning: true)
                 await activity?.update(ActivityContent<TimerAttributes.ContentState>(state: updatedState, staleDate: nil))
             }
         }
+        
+        hasStarted = true
+        isRunning = true
     }
     
     // Pause
@@ -102,16 +108,6 @@ class TimerManager {
         
         guard isRunning else { return }
         
-        isRunning = false
-        singleRun = startTapTime.timeIntervalSinceNow
-        compoundedRuns += singleRun
-        
-        // Look and Feel
-        buttonHaptics.impactOccurred()
-        autoHide?.cancel()
-        handleButtonHide()
-        
-        // HealthKit
         sessionDates?.append(.now)
         
         // ActivityKit
@@ -119,20 +115,14 @@ class TimerManager {
             let updatedState = TimerAttributes.ContentState(startDate: sessionDates?[0] ?? .now, pauses: pauses, isRunning: false)
             await activity?.update(ActivityContent<TimerAttributes.ContentState>(state: updatedState, staleDate: nil))
         }
+        
+        isRunning = false
     }
 
     // End
     func end() {
         
-        controlDate = .now
-        compoundedRuns = TimeInterval()
-        hasStarted = false
-        isRunning = false
-        
-        // Look and Feel
-        buttonHaptics.impactOccurred()
-        autoHide?.cancel()
-        hideStatusBarOnTap = false
+        guard hasStarted else { return }
         
         // HealthKit
         if let sessionDates = sessionDates {
@@ -146,19 +136,25 @@ class TimerManager {
                 }
             }
         }
-        sessionDates = nil
         
         // ActivityKit
         Task {
             let finalState = TimerAttributes.ContentState(startDate: sessionDates?[0] ?? .now, pauses: pauses, isRunning: false)
             await activity?.end(ActivityContent(state: finalState, staleDate: nil), dismissalPolicy: .immediate)
         }
+        
+        sessionDates = nil
+        
+        isRunning = false
+        hasStarted = false
     }
     
     // Reset: end with no HealthKit log
     func reset() {
-        controlDate = .now
-        compoundedRuns = TimeInterval()
+        sessionDates = nil
+        
+        isRunning = false
+        hasStarted = false
     }
     
     // Toggle Settings
@@ -167,43 +163,10 @@ class TimerManager {
         hideStatusBarOnTap = false
     }
     
-    // Hiding StatusBar
-    func handleButtonHide() {
-        hideStatusBarOnTap = false
-    }
-    
-    func handleScreenTap() {
-        autoHide?.cancel()
-        
-        if hasStarted {
-            withAnimation(.default) {
-                hideStatusBarOnTap.toggle()
-            }
-            autoHide = Task {
-                do {
-                    try await Task.sleep(for: .seconds(3))
-                    
-                    guard !Task.isCancelled else { return }
-                    
-                    withAnimation(.default) {
-                        hideStatusBarOnTap.toggle()
-                    }
-                } catch {
-                    print(error.localizedDescription)
-                }
-            }
-        } else {
-            withAnimation(.default) {
-                hideStatusBarOnTap.toggle()
-            }
-        }
-    }
-    
     init() {
         do {
             try settings = LoadSave.load(from: "settings.json")
         } catch {
-            print(error.localizedDescription)
             settings = Settings()
         }
     }

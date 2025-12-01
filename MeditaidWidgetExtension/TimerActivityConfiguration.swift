@@ -24,7 +24,7 @@ struct TimerActivityConfiguration: Widget {
                         .contentTransition(.numericText())
                         .animation(.spring(duration: 0.2), value: context.state.startDateAdjusted)
                 } else {
-                    Text(context.state.totalTimeAdjusted.formattedAdaptive)
+                    Text(timerInterval: context.state.startDateAdjusted...Date.distantFuture, pauseTime: .now, countsDown: false)
                         .monospacedDigit()
                         .foregroundStyle(.white)
                         .font(.largeTitle)
@@ -49,12 +49,10 @@ struct TimerActivityConfiguration: Widget {
             .preferredColorScheme(.dark)
             .padding()
             .activityBackgroundTint(.black)
-//            .activitySystemActionForegroundColor(Color.blue)
 
+            // Dynamic Island
         } dynamicIsland: { context in
             DynamicIsland {
-                // Expanded UI goes here.  Compose the expanded UI through
-                // various regions, like leading/trailing/center/bottom
                 DynamicIslandExpandedRegion(.leading) {
                     VStack {
                         Spacer()
@@ -65,7 +63,7 @@ struct TimerActivityConfiguration: Widget {
                                 .bold()
                                 .contentTransition(.numericText())
                         } else {
-                            Text(context.state.totalTimeAdjusted.formattedAdaptive)
+                            Text(timerInterval: context.state.startDateAdjusted...Date.distantFuture, pauseTime: .now, countsDown: false)
                                 .monospacedDigit()
                                 .font(.largeTitle)
                                 .bold()
@@ -111,10 +109,13 @@ struct TimerActivityConfiguration: Widget {
                     Text(timerInterval: context.state.startDateAdjusted...Date.distantFuture, countsDown: false)
                         .monospacedDigit()
                         .bold()
-                        .contentTransition(.numericText())
-                        .frame(maxWidth: 35, alignment: .leading)
+                        .frame(maxWidth: 42, alignment: .leading)
                 } else {
-                    Text(context.state.totalTimeAdjusted.formattedAdaptive)
+                    HStack {
+                        Spacer()
+                        Text(timerInterval: context.state.startDateAdjusted...Date.distantFuture, pauseTime: .now, countsDown: false)
+                            .frame(maxWidth: 42, alignment: .leading)
+                    }
                 }
             } compactTrailing: {
                 Image(systemName: "figure.mind.and.body")
@@ -129,8 +130,8 @@ struct TimerActivityConfiguration: Widget {
 #Preview(as: .dynamicIsland(.compact), using: TimerAttributes.init()) {
     TimerActivityConfiguration()
 } contentStates: {
-    TimerAttributes.ContentState(startDate: .now, pauses: [], isRunning: false)
-    TimerAttributes.ContentState(startDate: (.now - 600), pauses: [2, 8, 6], isRunning: true)
+    TimerAttributes.ContentState(startDate: (.now - 71), pauses: [], isRunning: false)
+    TimerAttributes.ContentState(startDate: (.now - 300), pauses: [2, 8, 6], isRunning: true)
 }
 
 #Preview(as: .content, using: TimerAttributes()) {
