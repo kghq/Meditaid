@@ -11,7 +11,7 @@ import SwiftUI
 @main
 struct MeditaidWidgetExtensionBundle: WidgetBundle {
     var body: some Widget {
-        // MeditaidWidgetExtension()
+        MeditaidWidget()
         // MeditaidWidgetExtensionControl()
         TimerActivityConfiguration()
     }
