@@ -8,7 +8,6 @@
 import ActivityKit
 import Foundation
 import Observation
-import SwiftUI
 
 @Observable
 class TimerManager {
@@ -65,7 +64,7 @@ class TimerManager {
     
     // Hiding Status Bar
     var hideStatusBarOnTap = false
-    var isStatusBarHidden: Bool {
+    var statusBarHidden: Bool {
         if hasStarted {
             return !hideStatusBarOnTap
         } else {

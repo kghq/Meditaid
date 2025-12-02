@@ -81,7 +81,6 @@ struct TimerView: View {
                 // Settings
                 Button("Settings") {
                     timerManager.toggleSettings()
-                    buttonHaptics.impactOccurred()
                 }
                 .disabled(timerManager.hasStarted)
                 .font(.title3)
@@ -92,8 +91,8 @@ struct TimerView: View {
         }
         .padding()
         .preferredColorScheme(.dark)
-        .statusBarHidden(timerManager.isStatusBarHidden)
-        .animation(.default, value: [timerManager.isStatusBarHidden, timerManager.hasStarted, timerManager.isRunning])
+        .statusBarHidden(timerManager.statusBarHidden)
+        .animation(.default, value: [timerManager.statusBarHidden, timerManager.hasStarted, timerManager.isRunning])
         .autoHideHomeIndicator(true)
         // Settings
         .sheet(isPresented: $timerManager.showingSettings) {

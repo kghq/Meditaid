@@ -7,12 +7,25 @@
 		<key>Meditaid.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>0</integer>
+			<integer>1</integer>
 		</dict>
 		<key>MeditaidWidgetExtensionExtension.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>1</integer>
+			<integer>0</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>33F820EE2EDDDD9B0096AAF9</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>33F821012EDDDEF60096AAF9</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>

@@ -37,6 +37,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		33E387F52EDF1404000ECE69 /* MeditaidWidgetExtensionExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MeditaidWidgetExtensionExtension.entitlements; sourceTree = "<group>"; };
 		33F820EF2EDDDD9B0096AAF9 /* Meditaid.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Meditaid.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		33F821022EDDDEF60096AAF9 /* MeditaidWidgetExtensionExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MeditaidWidgetExtensionExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		33F821042EDDDEF60096AAF9 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
@@ -58,13 +59,6 @@
 			);
 			target = 33F821012EDDDEF60096AAF9 /* MeditaidWidgetExtensionExtension */;
 		};
-		33F8225B2EDE36760096AAF9 /* Exceptions for "MeditaidWidgetExtension" folder in "Meditaid" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				AppIntents.swift,
-			);
-			target = 33F820EE2EDDDD9B0096AAF9 /* Meditaid */;
-		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -79,7 +73,6 @@
 		33F821082EDDDEF60096AAF9 /* MeditaidWidgetExtension */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				33F8225B2EDE36760096AAF9 /* Exceptions for "MeditaidWidgetExtension" folder in "Meditaid" target */,
 				33F821192EDDDEF80096AAF9 /* Exceptions for "MeditaidWidgetExtension" folder in "MeditaidWidgetExtensionExtension" target */,
 			);
 			path = MeditaidWidgetExtension;
@@ -110,6 +103,7 @@
 		33F820E62EDDDD9B0096AAF9 = {
 			isa = PBXGroup;
 			children = (
+				33E387F52EDF1404000ECE69 /* MeditaidWidgetExtensionExtension.entitlements */,
 				33F820F12EDDDD9B0096AAF9 /* Meditaid */,
 				33F821082EDDDEF60096AAF9 /* MeditaidWidgetExtension */,
 				33F821032EDDDEF60096AAF9 /* Frameworks */,
@@ -453,6 +447,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = MeditaidWidgetExtensionExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3RF2D3SK6K;
@@ -480,6 +475,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = MeditaidWidgetExtensionExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3RF2D3SK6K;
