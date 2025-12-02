@@ -45,6 +45,29 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		33E388F62EDF8570000ECE69 /* Exceptions for "Meditaid" folder in "Meditaid" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AppIntents/MeditaidWidgetExtensionControl.swift,
+			);
+			target = 33F820EE2EDDDD9B0096AAF9 /* Meditaid */;
+		};
+		33E388F82EDF87DE000ECE69 /* Exceptions for "Trash" folder in "Meditaid" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				ConfigurationAppIntent.swift,
+				MeditaidWidgetExtension.swift,
+			);
+			target = 33F820EE2EDDDD9B0096AAF9 /* Meditaid */;
+		};
+		33E388F92EDF87DE000ECE69 /* Exceptions for "Trash" folder in "MeditaidWidgetExtensionExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				ConfigurationAppIntent.swift,
+				MeditaidWidgetExtension.swift,
+			);
+			target = 33F821012EDDDEF60096AAF9 /* MeditaidWidgetExtensionExtension */;
+		};
 		33F821192EDDDEF80096AAF9 /* Exceptions for "MeditaidWidgetExtension" folder in "MeditaidWidgetExtensionExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -55,6 +78,7 @@
 		33F821222EDDDF440096AAF9 /* Exceptions for "Meditaid" folder in "MeditaidWidgetExtensionExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				AppIntents/MeditaidWidgetExtensionControl.swift,
 				Models/TimerAttributes.swift,
 			);
 			target = 33F821012EDDDEF60096AAF9 /* MeditaidWidgetExtensionExtension */;
@@ -62,9 +86,19 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		33E388F72EDF87C6000ECE69 /* Trash */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				33E388F82EDF87DE000ECE69 /* Exceptions for "Trash" folder in "Meditaid" target */,
+				33E388F92EDF87DE000ECE69 /* Exceptions for "Trash" folder in "MeditaidWidgetExtensionExtension" target */,
+			);
+			path = Trash;
+			sourceTree = "<group>";
+		};
 		33F820F12EDDDD9B0096AAF9 /* Meditaid */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				33E388F62EDF8570000ECE69 /* Exceptions for "Meditaid" folder in "Meditaid" target */,
 				33F821222EDDDF440096AAF9 /* Exceptions for "Meditaid" folder in "MeditaidWidgetExtensionExtension" target */,
 			);
 			path = Meditaid;
@@ -103,6 +137,7 @@
 		33F820E62EDDDD9B0096AAF9 = {
 			isa = PBXGroup;
 			children = (
+				33E388F72EDF87C6000ECE69 /* Trash */,
 				33E387F52EDF1404000ECE69 /* MeditaidWidgetExtensionExtension.entitlements */,
 				33F820F12EDDDD9B0096AAF9 /* Meditaid */,
 				33F821082EDDDEF60096AAF9 /* MeditaidWidgetExtension */,
@@ -147,6 +182,7 @@
 				33F821172EDDDEF80096AAF9 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
+				33E388F72EDF87C6000ECE69 /* Trash */,
 				33F820F12EDDDD9B0096AAF9 /* Meditaid */,
 			);
 			name = Meditaid;

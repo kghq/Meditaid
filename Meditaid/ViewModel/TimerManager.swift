@@ -33,9 +33,7 @@ class TimerManager {
             }
         }
     }
-    
     var pauses = [TimeInterval]()
-    
     var compoundedPauses: TimeInterval {
         var compPauses = TimeInterval.zero
         for pause in pauses {
@@ -58,7 +56,7 @@ class TimerManager {
     }
     
     // App Intents
-    static let shared = TimerManager()
+    // static let shared = TimerManager()
 
     // Healthkit
     var healthKitManager = HealthKitManager()
