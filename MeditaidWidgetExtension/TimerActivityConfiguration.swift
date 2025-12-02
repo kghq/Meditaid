@@ -5,6 +5,7 @@
 //  Created by Krzysztof Garmulewicz on 01/12/2025.
 //
 
+import AppIntents
 import ActivityKit
 import SwiftUI
 import WidgetKit
@@ -13,42 +14,9 @@ struct TimerActivityConfiguration: Widget {
     var body: some WidgetConfiguration {
         
         ActivityConfiguration(for: TimerAttributes.self) { context in
-            // Lock screen/banner UI goes here
-            HStack {
-                if context.state.isRunning {
-                    Text(timerInterval: context.state.startDateAdjusted...Date.distantFuture, countsDown: false)
-                        .monospacedDigit()
-                        .foregroundStyle(.white)
-                        .font(.largeTitle)
-                        .bold()
-                        .contentTransition(.numericText())
-                        .animation(.spring(duration: 0.2), value: context.state.startDateAdjusted)
-                } else {
-                    Text(timerInterval: context.state.startDateAdjusted...Date.distantFuture, pauseTime: .now, countsDown: false)
-                        .monospacedDigit()
-                        .foregroundStyle(.white)
-                        .font(.largeTitle)
-                        .bold()
-                }
-                Spacer()
-                HStack {
-                    VStack {
-                        Circle()
-                            .frame(maxWidth: 50)
-                            .foregroundStyle(.red)
-                            .opacity(0.4)
-                    }
-                    VStack {
-                        Circle()
-                            .frame(maxWidth: 50)
-                            .foregroundStyle(.green)
-                            .opacity(0.4)
-                    }
-                }
-            }
-            .preferredColorScheme(.dark)
-            .padding()
-            .activityBackgroundTint(.black)
+            
+            // Lock screen
+            LockScreenActivity(context: context)
 
             // Dynamic Island
         } dynamicIsland: { context in
@@ -86,24 +54,6 @@ struct TimerActivityConfiguration: Widget {
                         }
                     }
                 }
-//                DynamicIslandExpandedRegion(.center) {
-//                    HStack {
-////                        Text(timerInterval: startDate...endDate, countsDown: false)
-////                            .font(.largeTitle)
-////                            .monospacedDigit()
-////                            .bold()
-////                        Spacer()
-//                    }
-//                }
-//                DynamicIslandExpandedRegion(.bottom) {
-//                    HStack {
-////                        Text(timerInterval: startDate...endDate, countsDown: false)
-////                            .font(.largeTitle)
-////                            .monospacedDigit()
-////                            .bold()
-////                        Spacer()
-//                    }
-//                }
             } compactLeading: {
                 if context.state.isRunning {
                     Text(timerInterval: context.state.startDateAdjusted...Date.distantFuture, countsDown: false)
@@ -127,14 +77,87 @@ struct TimerActivityConfiguration: Widget {
     }
 }
 
-#Preview(as: .dynamicIsland(.compact), using: TimerAttributes.init()) {
-    TimerActivityConfiguration()
-} contentStates: {
-    TimerAttributes.ContentState(startDate: (.now - 71), pauses: [], isRunning: false)
-    TimerAttributes.ContentState(startDate: (.now - 300), pauses: [2, 8, 6], isRunning: true)
+
+struct LockScreenActivity: View {
+    
+    let context: ActivityViewContext<TimerAttributes>
+    
+    var body: some View {
+        HStack {
+            if context.state.isRunning {
+                LiveActivityDisplayTimer(startDate: context.state.startDateAdjusted, endDate: .distantFuture, countsDown: false)
+            } else {
+                LiveActivityDisplayTimer(startDate: context.state.startDateAdjusted, endDate: .distantFuture, pauseTime: .now, countsDown: false)
+            }
+            
+            Spacer()
+            
+            LockScreenActivityButton(type: "End", isRunning: context.state.isRunning)
+
+        }
+        .padding()
+        .background(.white)
+        .activitySystemActionForegroundColor(Color.red)
+        .activityBackgroundTint(.green)
+        // .keylineTint(Color.orange)
+    }
 }
 
-#Preview(as: .content, using: TimerAttributes()) {
+
+
+
+
+struct LockScreenActivityButton: View {
+    
+    let type: String
+    var isRunning: Bool = true
+    
+    var body: some View {
+        VStack {
+            Button(intent: PauseTimerIntent()) {
+                Label("End", systemImage: "stop.fill")
+                    .font(.caption)
+                    .labelsHidden()
+            }
+            .tint(.red)
+            .disabled(isRunning)
+            .frame(maxWidth: .infinity)
+            Button(intent: PauseTimerIntent()) {
+                Label("Pause", systemImage: "pause")
+                    .font(.caption)
+                    .labelsHidden()
+            }
+            .tint(.blue)
+            .frame(maxWidth: .infinity)
+        }
+        .frame(width: 100)
+    }
+}
+
+struct LiveActivityDisplayTimer: View {
+    
+    let startDate: Date
+    let endDate: Date
+    var pauseTime: Date? = nil
+    let countsDown: Bool
+    
+    var body: some View {
+        Text(timerInterval: startDate...endDate, pauseTime: pauseTime, countsDown: false)
+            .monospacedDigit()
+            .foregroundStyle(.white)
+            .font(.largeTitle)
+            .bold()
+    }
+}
+
+#Preview("Dynamic Island", as: .dynamicIsland(.compact), using: TimerAttributes.init()) {
+    TimerActivityConfiguration()
+} contentStates: {
+    TimerAttributes.ContentState(startDate: (.now - 143), pauses: [], isRunning: true)
+//    TimerAttributes.ContentState(startDate: (.now - 300), pauses: [2, 8, 6], isRunning: true)
+}
+
+#Preview("Lock Screen", as: .content, using: TimerAttributes()) {
     TimerActivityConfiguration()
 } contentStates: {
     TimerAttributes.ContentState(startDate: .now, pauses: [], isRunning: false)

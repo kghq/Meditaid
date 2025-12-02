@@ -5,10 +5,22 @@
 //  Created by Krzysztof Garmulewicz on 01/12/2025.
 //
 
+import AppIntents
 import Foundation
 
-enum Mode: Codable {
+enum Mode: String, Codable {
     case zen, timer
+}
+
+extension Mode: AppEnum {
+    static var typeDisplayName: LocalizedStringResource = "Mode"
+    
+    static var typeDisplayRepresentation:TypeDisplayRepresentation = "Mode"
+    
+    static var caseDisplayRepresentations: [Mode: DisplayRepresentation] = [
+        .zen: "Zen",
+        .timer: "Timer"
+    ]
 }
 
 @Observable

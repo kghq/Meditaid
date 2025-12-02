@@ -6,6 +6,7 @@
 //
 
 import ActivityKit
+import AppIntents
 import Foundation
 import Observation
 
@@ -55,6 +56,9 @@ class TimerManager {
             return Date.now + startTime.timeIntervalSince(sessionDates?.last ?? .now) + compoundedPauses..<Date.distantFuture
         }
     }
+    
+    // App Intents
+    static let shared = TimerManager()
 
     // Healthkit
     var healthKitManager = HealthKitManager()
