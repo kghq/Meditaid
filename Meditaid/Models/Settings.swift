@@ -8,19 +8,8 @@
 import AppIntents
 import Foundation
 
-enum Mode: String, Codable {
+enum Mode: Codable {
     case zen, timer
-}
-
-extension Mode: AppEnum {
-    static var typeDisplayName: LocalizedStringResource = "Mode"
-    
-    static var typeDisplayRepresentation:TypeDisplayRepresentation = "Mode"
-    
-    static var caseDisplayRepresentations: [Mode: DisplayRepresentation] = [
-        .zen: "Zen",
-        .timer: "Timer"
-    ]
 }
 
 @Observable

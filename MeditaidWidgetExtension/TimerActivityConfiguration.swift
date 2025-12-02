@@ -21,39 +21,15 @@ struct TimerActivityConfiguration: Widget {
             // Dynamic Island
         } dynamicIsland: { context in
             DynamicIsland {
+                
+                // Expanded
                 DynamicIslandExpandedRegion(.leading) {
-                    VStack {
-                        Spacer()
-                        if context.state.isRunning {
-                            Text(timerInterval: context.state.startDateAdjusted...Date.distantFuture, countsDown: false)
-                                .monospacedDigit()
-                                .font(.largeTitle)
-                                .bold()
-                                .contentTransition(.numericText())
-                        } else {
-                            Text(timerInterval: context.state.startDateAdjusted...Date.distantFuture, pauseTime: .now, countsDown: false)
-                                .monospacedDigit()
-                                .font(.largeTitle)
-                                .bold()
-                        }
-                    }
-                }
-                DynamicIslandExpandedRegion(.trailing) {
                     HStack {
-                        VStack {
-                            Circle()
-                                .frame(maxWidth: .infinity)
-                                .foregroundStyle(.red)
-                                .opacity(0.4)
-                        }
-                        VStack {
-                            Circle()
-                                .frame(maxWidth: .infinity)
-                                .foregroundStyle(.green)
-                                .opacity(0.4)
-                        }
+                        DynamicIslandExpandedLeading(context: context)
                     }
                 }
+                
+                // Compact
             } compactLeading: {
                 if context.state.isRunning {
                     Text(timerInterval: context.state.startDateAdjusted...Date.distantFuture, countsDown: false)
@@ -69,71 +45,48 @@ struct TimerActivityConfiguration: Widget {
                 }
             } compactTrailing: {
                 Image(systemName: "figure.mind.and.body")
+                
+                // Minimal
             } minimal: {
                 Image(systemName: "figure.mind.and.body")
             }
-            .keylineTint(Color.orange)
         }
     }
 }
 
-
+// Lock Screen
 struct LockScreenActivity: View {
-    
     let context: ActivityViewContext<TimerAttributes>
-    
     var body: some View {
         HStack {
+            Spacer()
             if context.state.isRunning {
                 LiveActivityDisplayTimer(startDate: context.state.startDateAdjusted, endDate: .distantFuture, countsDown: false)
             } else {
                 LiveActivityDisplayTimer(startDate: context.state.startDateAdjusted, endDate: .distantFuture, pauseTime: .now, countsDown: false)
             }
-            
-            Spacer()
-            
-            LockScreenActivityButton(type: "End", isRunning: context.state.isRunning)
-
         }
         .padding()
-        .background(.white)
-        .activitySystemActionForegroundColor(Color.red)
-        .activityBackgroundTint(.green)
-        // .keylineTint(Color.orange)
+        .background(.black)
     }
 }
 
-
-
-
-
-struct LockScreenActivityButton: View {
-    
-    let type: String
-    var isRunning: Bool = true
-    
+// Dynamic Island Expanded
+struct DynamicIslandExpandedLeading: View {
+    let context: ActivityViewContext<TimerAttributes>
     var body: some View {
         VStack {
-            Button(intent: PauseTimerIntent()) {
-                Label("End", systemImage: "stop.fill")
-                    .font(.caption)
-                    .labelsHidden()
+            Spacer()
+            if context.state.isRunning {
+                LiveActivityDisplayTimer(startDate: context.state.startDateAdjusted, endDate: .distantFuture, countsDown: false)
+            } else {
+                LiveActivityDisplayTimer(startDate: context.state.startDateAdjusted, endDate: .distantFuture, pauseTime: .now, countsDown: false)
             }
-            .tint(.red)
-            .disabled(isRunning)
-            .frame(maxWidth: .infinity)
-            Button(intent: PauseTimerIntent()) {
-                Label("Pause", systemImage: "pause")
-                    .font(.caption)
-                    .labelsHidden()
-            }
-            .tint(.blue)
-            .frame(maxWidth: .infinity)
         }
-        .frame(width: 100)
     }
 }
 
+// Text Timer
 struct LiveActivityDisplayTimer: View {
     
     let startDate: Date
@@ -150,11 +103,11 @@ struct LiveActivityDisplayTimer: View {
     }
 }
 
-#Preview("Dynamic Island", as: .dynamicIsland(.compact), using: TimerAttributes.init()) {
+#Preview("Dynamic Island", as: .dynamicIsland(.expanded), using: TimerAttributes.init()) {
     TimerActivityConfiguration()
 } contentStates: {
     TimerAttributes.ContentState(startDate: (.now - 143), pauses: [], isRunning: true)
-//    TimerAttributes.ContentState(startDate: (.now - 300), pauses: [2, 8, 6], isRunning: true)
+    TimerAttributes.ContentState(startDate: (.now - 300), pauses: [2, 8, 6], isRunning: true)
 }
 
 #Preview("Lock Screen", as: .content, using: TimerAttributes()) {

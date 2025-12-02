@@ -88,7 +88,6 @@ class TimerManager {
             let attributes = TimerAttributes()
             let initialState = TimerAttributes.ContentState(startDate: .now, pauses: pauses, isRunning: true)
             let content = ActivityContent(state: initialState, staleDate: nil)
-            print("test2")
             do {
                 activity = try Activity.request(attributes: attributes, content: content, pushType: nil)
             } catch {
