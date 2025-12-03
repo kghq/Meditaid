@@ -48,7 +48,7 @@
 		33E388F62EDF8570000ECE69 /* Exceptions for "Meditaid" folder in "Meditaid" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				AppIntents/MeditaidWidgetExtensionControl.swift,
+				AppIntents/WidgetKit/MeditaidWidgetExtensionControl.swift,
 			);
 			target = 33F820EE2EDDDD9B0096AAF9 /* Meditaid */;
 		};
@@ -69,7 +69,7 @@
 		33F821222EDDDF440096AAF9 /* Exceptions for "Meditaid" folder in "MeditaidWidgetExtensionExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				AppIntents/MeditaidWidgetExtensionControl.swift,
+				AppIntents/WidgetKit/MeditaidWidgetExtensionControl.swift,
 				Models/TimerAttributes.swift,
 			);
 			target = 33F821012EDDDEF60096AAF9 /* MeditaidWidgetExtensionExtension */;

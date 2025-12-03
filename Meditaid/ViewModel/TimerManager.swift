@@ -13,61 +13,23 @@ import Observation
 @Observable
 class TimerManager {
     
-    // Settings
-    var settings: Settings
+    // Clock & Settings
+    var clock: ClockModel
+    // var settings: Settings settings not needed?
+    
     var showingSettings = false
-    
-    // Clock
-    var isRunning = false
-    var hasStarted = false
-    
-    var sessionDates: [Date]? {
-        didSet {
-            guard let sessionDates else { return }
-            if sessionDates.count % 2 != 0 {
-                pauses = []
-                for i in stride(from: 1, to: sessionDates.count - 1, by: 2) {
-                    let pause = sessionDates[i + 1].timeIntervalSince(sessionDates[i])
-                    pauses.append(pause)
-                }
-            }
-        }
-    }
-    var pauses = [TimeInterval]()
-    var compoundedPauses: TimeInterval {
-        var compPauses = TimeInterval.zero
-        for pause in pauses {
-            compPauses += pause
-        }
-        return compPauses
-    }
-    
-    // Display
-    var timerCountingRange: Range<Date> {
-        guard let startTime = sessionDates?.first else { return Date.now..<Date.distantFuture }
-        
-        let adjustedStartDate = startTime.addingTimeInterval(compoundedPauses)
-        
-        if isRunning {
-            return adjustedStartDate..<Date.distantFuture
-        } else {
-            return Date.now + startTime.timeIntervalSince(sessionDates?.last ?? .now) + compoundedPauses..<Date.distantFuture
-        }
-    }
-    
-    // App Intents
-    // static let shared = TimerManager()
 
     // Healthkit
     var healthKitManager = HealthKitManager()
     
-    // ActivityKit
+    // AppIntents & ActivityKit
+    static let shared = TimerManager()
     private var activity: Activity<TimerAttributes>? = nil
     
     // Hiding Status Bar
     var hideStatusBarOnTap = false
     var statusBarHidden: Bool {
-        if hasStarted {
+        if clock.hasStarted {
             return !hideStatusBarOnTap
         } else {
             return hideStatusBarOnTap
@@ -77,55 +39,58 @@ class TimerManager {
     // Start
     func start() {
         
-        guard !isRunning else { return }
+        guard !clock.isRunning else { return }
         
-        sessionDates == nil ? sessionDates = [.now] : sessionDates?.append(.now)
+        clock.sessionDates == nil ? clock.sessionDates = [.now] : clock.sessionDates?.append(.now)
         
         // ActivityKit
-        if !hasStarted {
+        if !clock.hasStarted {
             let attributes = TimerAttributes()
-            let initialState = TimerAttributes.ContentState(startDate: .now, pauses: pauses, isRunning: true)
+            let initialState = TimerAttributes.ContentState(startDate: .now, pauses: clock.pauses, isRunning: true)
             let content = ActivityContent(state: initialState, staleDate: nil)
             do {
                 activity = try Activity.request(attributes: attributes, content: content, pushType: nil)
             } catch {
                 print(error.localizedDescription)
-                print("test")
             }
         } else {
             Task {
-                let updatedState = TimerAttributes.ContentState(startDate: sessionDates?[0] ?? .now, pauses: pauses, isRunning: true)
+                let updatedState = TimerAttributes.ContentState(startDate: clock.sessionDates?[0] ?? .now, pauses: clock.pauses, isRunning: true)
                 await activity?.update(ActivityContent<TimerAttributes.ContentState>(state: updatedState, staleDate: nil))
             }
         }
         
-        hasStarted = true
-        isRunning = true
+        clock.hasStarted = true
+        clock.isRunning = true
+        
+        save()
     }
     
     // Pause
     func pause() {
         
-        guard isRunning else { return }
+        guard clock.isRunning else { return }
         
-        sessionDates?.append(.now)
+        clock.sessionDates?.append(.now)
         
         // ActivityKit
         Task {
-            let updatedState = TimerAttributes.ContentState(startDate: sessionDates?[0] ?? .now, pauses: pauses, isRunning: false)
+            let updatedState = TimerAttributes.ContentState(startDate: clock.sessionDates?[0] ?? .now, pauses: clock.pauses, isRunning: false)
             await activity?.update(ActivityContent<TimerAttributes.ContentState>(state: updatedState, staleDate: nil))
         }
         
-        isRunning = false
+        clock.isRunning = false
+        
+        save()
     }
 
     // End
     func end() {
         
-        guard hasStarted else { return }
+        guard clock.hasStarted else { return }
         
         // HealthKit
-        if let sessionDates = sessionDates {
+        if let sessionDates = clock.sessionDates {
             for i in stride(from: 0, to: sessionDates.count, by: 2) { // or to: sessionDates.count - 1, then no guard needed
                 guard i + 1 < sessionDates.count else { break } // skips the last date with no pair
                 let startDate = sessionDates[i]
@@ -139,22 +104,27 @@ class TimerManager {
         
         // ActivityKit
         Task {
-            let finalState = TimerAttributes.ContentState(startDate: sessionDates?[0] ?? .now, pauses: pauses, isRunning: false)
+            let finalState = TimerAttributes.ContentState(startDate: clock.sessionDates?[0] ?? .now, pauses: clock.pauses, isRunning: false)
             await activity?.end(ActivityContent(state: finalState, staleDate: nil), dismissalPolicy: .immediate)
         }
+        endAllLiveActivities()
         
-        sessionDates = nil
+        clock.sessionDates = nil
         
-        isRunning = false
-        hasStarted = false
+        clock.isRunning = false
+        clock.hasStarted = false
+        
+        save()
     }
     
     // Reset: end with no HealthKit log
     func reset() {
-        sessionDates = nil
+        clock.sessionDates = nil
         
-        isRunning = false
-        hasStarted = false
+        clock.isRunning = false
+        clock.hasStarted = false
+        
+        save()
     }
     
     // Toggle Settings
@@ -163,11 +133,18 @@ class TimerManager {
         hideStatusBarOnTap = false
     }
     
+    func save() {
+        LoadSave.save(clock, to: "clock.json")
+    }
+    
     init() {
         do {
-            try settings = LoadSave.load(from: "settings.json")
+            try clock = LoadSave.load(from: "clock.json")
+            // try settings = LoadSave.load(from: "settings.json")
         } catch {
-            settings = Settings()
+            print("Failed to load clock. Default.")
+            clock = ClockModel()
+            // settings = Settings()
         }
     }
     
@@ -179,4 +156,43 @@ class TimerManager {
 //            settingsToMigrate.schemaVersion = 1
 //        }
 //    }
+}
+
+extension TimerManager {
+    func endOldActivities() {
+        guard let currentActivityID = self.activity?.id else {
+            // endAllActivities()
+            return
+        }
+        
+        Task {
+            let allActivities = Activity<TimerAttributes>.activities
+            for activity in allActivities {
+                if activity.id != currentActivityID {
+                    let finalState = TimerAttributes.ContentState(
+                        startDate: Date.distantPast,
+                        pauses: [],
+                        isRunning: false
+                    )
+                    await activity.end(ActivityContent(state: finalState, staleDate: nil), dismissalPolicy: .immediate)
+                }
+            }
+        }
+    }
+    
+    func endAllLiveActivities() {
+        Task {
+            let allActivities = Activity<TimerAttributes>.activities
+            
+            for activity in allActivities {
+                let finalState = TimerAttributes.ContentState(
+                    startDate: Date.distantPast,
+                    pauses: [],
+                    isRunning: false
+                )
+                
+                await activity.end(ActivityContent(state: finalState, staleDate: nil), dismissalPolicy: .immediate)
+            }
+        }
+    }
 }

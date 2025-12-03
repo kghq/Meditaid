@@ -10,20 +10,26 @@ import SwiftUI
 
 struct TimerView: View {
     
-    @State private var timerManager = TimerManager()
+//    @State private var timerManager = TimerManager()
+    
+    @Environment(TimerManager.self) private var timerManager
+    @Environment(Settings.self) private var settings
     
     @Environment(\.scenePhase) private var scenePhase
     @State private var autoHide: Task<Void, Never>? = nil // managing the hiding of status bar
     private let buttonHaptics = UIImpactFeedbackGenerator(style: .medium)
 
     var body: some View {
+        
+        @Bindable var timerManager = timerManager
+        
         VStack(spacing: 30) {
             ZStack {
-                
+
                 Spacer()
                 
                 TimelineView(.animation) { context in
-                    Text(context.date, format: .timer(countingUpIn: timerManager.timerCountingRange))
+                    Text(context.date, format: .timer(countingUpIn: timerManager.clock.timerCountingRange))
                         .monospacedDigit()
                         .font(.system(size: 60, weight: .medium))
                 }
@@ -51,10 +57,10 @@ struct TimerView: View {
                         autoHide?.cancel()
                         timerManager.hideStatusBarOnTap = false
                     }
-                    .disabled(!timerManager.hasStarted)
+                    .disabled(!timerManager.clock.hasStarted)
                     .font(.title3)
                     .bold()
-                    .foregroundStyle(timerManager.hasStarted ? .red.opacity(timerManager.isRunning ? 0.7 : 0.8) : .secondary)
+                    .foregroundStyle(timerManager.clock.hasStarted ? .red.opacity(timerManager.clock.isRunning ? 0.7 : 0.8) : .secondary)
                     .padding()
     //                Button("Reset") {
     //                    timerManager.reset()
@@ -66,15 +72,15 @@ struct TimerView: View {
                     Spacer()
                     
                     // Start / Pause
-                    Button(timerManager.isRunning ? "Pause" : (timerManager.hasStarted ? "Resume" : "Start")) {
-                        timerManager.isRunning ? timerManager.pause() : timerManager.start()
+                    Button(timerManager.clock.isRunning ? "Pause" : (timerManager.clock.hasStarted ? "Resume" : "Start")) {
+                        timerManager.clock.isRunning ? timerManager.pause() : timerManager.start()
                         buttonHaptics.impactOccurred()
                         autoHide?.cancel()
                         handleButtonHide()
                     }
                     .font(.title3)
                     .bold()
-                    .foregroundStyle(timerManager.hasStarted ? .blue.opacity(timerManager.isRunning ? 0.7 : 0.8) : .green.opacity(0.9))
+                    .foregroundStyle(timerManager.clock.hasStarted ? .blue.opacity(timerManager.clock.isRunning ? 0.7 : 0.8) : .green.opacity(0.9))
                     .padding()
                 }
                 
@@ -82,25 +88,25 @@ struct TimerView: View {
                 Button("Settings") {
                     timerManager.toggleSettings()
                 }
-                .disabled(timerManager.hasStarted)
+                .disabled(timerManager.clock.hasStarted)
                 .font(.title3)
                 .bold()
-                .opacity(timerManager.hasStarted ? 0.0 : 0.7)
+                .opacity(timerManager.clock.hasStarted ? 0.0 : 0.7)
                 .padding()
             }
         }
         .padding()
         .preferredColorScheme(.dark)
         .statusBarHidden(timerManager.statusBarHidden)
-        .animation(.default, value: [timerManager.statusBarHidden, timerManager.hasStarted, timerManager.isRunning])
+        .animation(.default, value: [timerManager.statusBarHidden, timerManager.clock.hasStarted, timerManager.clock.isRunning])
         .autoHideHomeIndicator(true)
         // Settings
         .sheet(isPresented: $timerManager.showingSettings) {
-            SettingsView(settings: timerManager.settings)
+            SettingsView(settings: settings)
         }
-        .onChange(of: scenePhase) {
-            timerManager.settings.healthKitEnabled = timerManager.healthKitManager.checkAuthorization()
-        }
+//        .onChange(of: scenePhase) {
+//            timerManager.settings.healthKitEnabled = timerManager.healthKitManager.checkAuthorization()
+//        }
     }
     
     // Hiding StatusBar
@@ -112,7 +118,7 @@ struct TimerView: View {
         
         autoHide?.cancel()
         
-        if timerManager.hasStarted {
+        if timerManager.clock.hasStarted {
             withAnimation(.default) {
                 timerManager.hideStatusBarOnTap.toggle()
             }
@@ -143,6 +149,8 @@ struct TimerView: View {
 
 #Preview {
     TimerView()
+        .environment(TimerManager())
+        .environment(Settings())
 }
 
 // Interval haptics and sounds

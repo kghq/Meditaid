@@ -8,12 +8,20 @@
 import AppIntents
 import Foundation
 
-enum Mode: Codable {
+enum Mode: String, Codable, AppEnum {
     case zen, timer
+    
+    static var typeDisplayRepresentation: TypeDisplayRepresentation = "Mode"
+    
+    static var caseDisplayRepresentations: [Mode: DisplayRepresentation] = [
+        .zen: DisplayRepresentation(title: "Zen", image: .init(systemName: "figure.mind.and.body")),
+        .timer: DisplayRepresentation(title: "Timer", image: .init(systemName: "stopwatch"))
+    ]
 }
 
 @Observable
 class Settings: Codable {
+    
     // General
     var mode: Mode = .zen {
         didSet { save() }

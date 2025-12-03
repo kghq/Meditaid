@@ -10,12 +10,12 @@
 //struct ShortcutsProvider: AppShortcutsProvider {
 //    static var appShortcuts: [AppShortcut] {
 //        AppShortcut(
-//            intent: OpenAppIntent(),
+//            intent: StartZenIntent(),
 //            phrases: [
-//                "Open \(.applicationName)",
-//                "Launch \(.applicationName)"
+//                "Start meditating in \(.applicationName)",
+//                // "Launch \(\.$mode) in \(.applicationName)"
 //            ],
-//            shortTitle: "Open",
+//            shortTitle: "Zen",
 //            systemImageName: "figure.mind.and.body"
 //        )
 //    }

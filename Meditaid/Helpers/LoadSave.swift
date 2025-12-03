@@ -11,11 +11,9 @@ struct LoadSave {
     static func save<T: Codable>(_ items: T, to fileDirectory: String) {
         if let data = try? JSONEncoder().encode(items) {
             let url = URL.documentsDirectory.appending(path: fileDirectory)
-            
             do {
                 try data.write(to: url, options: [.atomic, .completeFileProtection])
             } catch {
-                print(error.localizedDescription)
             }
         }
     }
