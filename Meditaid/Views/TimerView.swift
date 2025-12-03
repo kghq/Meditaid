@@ -10,10 +10,19 @@ import SwiftUI
 
 struct TimerView: View {
     
-//    @State private var timerManager = TimerManager()
-    
     @Environment(TimerManager.self) private var timerManager
     @Environment(Settings.self) private var settings
+    
+    // Hiding Status Bar
+    @State private var showingSettings = false
+    @State private var hideStatusBarOnTap = false
+    private var statusBarHidden: Bool {
+        if timerManager.clock.hasStarted {
+            return !hideStatusBarOnTap
+        } else {
+            return hideStatusBarOnTap
+        }
+    }
     
     @Environment(\.scenePhase) private var scenePhase
     @State private var autoHide: Task<Void, Never>? = nil // managing the hiding of status bar
@@ -55,7 +64,7 @@ struct TimerView: View {
                         timerManager.end()
                         buttonHaptics.impactOccurred()
                         autoHide?.cancel()
-                        timerManager.hideStatusBarOnTap = false
+                        hideStatusBarOnTap = false
                     }
                     .disabled(!timerManager.clock.hasStarted)
                     .font(.title3)
@@ -86,7 +95,7 @@ struct TimerView: View {
                 
                 // Settings
                 Button("Settings") {
-                    timerManager.toggleSettings()
+                    toggleSettings()
                 }
                 .disabled(timerManager.clock.hasStarted)
                 .font(.title3)
@@ -97,11 +106,11 @@ struct TimerView: View {
         }
         .padding()
         .preferredColorScheme(.dark)
-        .statusBarHidden(timerManager.statusBarHidden)
-        .animation(.default, value: [timerManager.statusBarHidden, timerManager.clock.hasStarted, timerManager.clock.isRunning])
+        .statusBarHidden(statusBarHidden)
+        .animation(.default, value: [statusBarHidden, timerManager.clock.hasStarted, timerManager.clock.isRunning])
         .autoHideHomeIndicator(true)
         // Settings
-        .sheet(isPresented: $timerManager.showingSettings) {
+        .sheet(isPresented: $showingSettings) {
             SettingsView(settings: settings)
         }
 //        .onChange(of: scenePhase) {
@@ -109,9 +118,15 @@ struct TimerView: View {
 //        }
     }
     
+    // Toggle Settings
+    private func toggleSettings() {
+        showingSettings.toggle()
+        hideStatusBarOnTap = false
+    }
+    
     // Hiding StatusBar
     private func handleButtonHide() {
-        timerManager.hideStatusBarOnTap = false
+        hideStatusBarOnTap = false
     }
     
     private func handleScreenTap() {
@@ -120,7 +135,7 @@ struct TimerView: View {
         
         if timerManager.clock.hasStarted {
             withAnimation(.default) {
-                timerManager.hideStatusBarOnTap.toggle()
+                hideStatusBarOnTap.toggle()
             }
             
             guard autoHide == nil else { return }
@@ -130,7 +145,7 @@ struct TimerView: View {
                     try await Task.sleep(for: .seconds(3))
                     
                     withAnimation(.default) {
-                        timerManager.hideStatusBarOnTap.toggle()
+                        hideStatusBarOnTap.toggle()
                     }
                     
                     autoHide = nil
@@ -141,7 +156,7 @@ struct TimerView: View {
             }
         } else {
             withAnimation(.default) {
-                timerManager.hideStatusBarOnTap.toggle()
+                hideStatusBarOnTap.toggle()
             }
         }
     }

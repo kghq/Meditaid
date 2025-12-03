@@ -1,8 +1,5 @@
 # NOTES
 
-## TODO
-Widget opening the app
-
 ## Timer
 When this mode on, a progress bar below the timer always visible (even when not running)
 A grid of 0: hours options and :15 minutes options. Option pressed has some color. Same font as clock.
@@ -35,7 +32,7 @@ Complications
 ## Other Features
 Glass font for timer and buttons
 Green tint for glass
-Accessibility (actually should be quite easy in such an easy app. Consult HWS.)
+Accessibility (actually should be quite easy in such a simple app. Consult HWS.)
 Localization
 Onboarding
 Reminders: fire off only if no meditation logged that day.
@@ -80,7 +77,7 @@ figure.mind.and.body
 gear
 gearshape2
 
-## Everyapp shpuld have
+## Every app shpuld have
 Widgets: Live activities, widgets per se
 App intents: spotlight suggestions, Siri integration, Shortcuts and Actions (with Action Button)
 Lock screen widgets and button for Control Center
@@ -139,3 +136,25 @@ Wheel rotating at a given cadence: for example, a visulal queue every 15 minutes
 Or a breathing ring that contracts and expands.
 Timing of a contracting circle: 5.5 x 5.5 x 5.5
 Breathing circle with one over it, in color of background, indicating time passed
+
+
+    func endOldActivities() {
+        guard let currentActivityID = self.activity?.id else {
+            // endAllActivities()
+            return
+        }
+        
+        Task {
+            let allActivities = Activity<TimerAttributes>.activities
+            for activity in allActivities {
+                if activity.id != currentActivityID {
+                    let finalState = TimerAttributes.ContentState(
+                        startDate: Date.distantPast,
+                        pauses: [],
+                        isRunning: false
+                    )
+                    await activity.end(ActivityContent(state: finalState, staleDate: nil), dismissalPolicy: .immediate)
+                }
+            }
+        }
+    }
