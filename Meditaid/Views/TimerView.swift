@@ -5,16 +5,14 @@
 //  Created by Krzysztof Garmulewicz on 01/12/2025.
 //
 
-import HealthKit
+// import HealthKit
+import Observation
 import SwiftUI
 
 struct TimerView: View {
     
-//    @Environment(TimerManager.self) private var timerManager
-//    @Environment(Settings.self) private var settings
-	
-	@State private var settings = Settings()
-	@State private var timerManager = TimerManager(clock: ClockModel(mode: .timer))
+    @Environment(TimerManager.self) private var timerManager
+    @Environment(Settings.self) private var settings
     
     // Hiding Status Bar
     @State private var showingSettings = false
@@ -32,8 +30,6 @@ struct TimerView: View {
     private let buttonHaptics = UIImpactFeedbackGenerator(style: .medium)
 
     var body: some View {
-        
-        @Bindable var timerManager = timerManager
 		
         VStack(spacing: 30) {
             ZStack {
@@ -45,19 +41,42 @@ struct TimerView: View {
 						.frame(minWidth: 280, minHeight: 280)
 					
 					VStack {
-						Text("0:    1:    2:    3:    4:    5:")
+						HStack {
+							Text("0h")
+							Spacer()
+							Text("1h")
+							Spacer()
+							Text("2h")
+							Spacer()
+							Text("3h")
+							Spacer()
+							Text("4h")
+							Spacer()
+							Text("5h")
+						}
 						Spacer()
-						// Text("3: 4: 5:")
-						Text(":5  :10  :15  :20  :30  :45")
-						// Text(":20 :30 :45")
+						HStack {
+							Text("05'")
+							Spacer()
+							Text("10'")
+							Spacer()
+							Text("15'")
+							Spacer()
+							Text("20'")
+							Spacer()
+							Text("30'")
+							Spacer()
+							Text("45'")
+						}
 					}
-					.padding(.vertical, 60)
-					.opacity(timerManager.clock.hasStarted ? 0.0 : 0.9)
+					.monospacedDigit()
+					.font(.system(size: 30, weight: .semibold))
+					.padding(.vertical, 40)
+					.opacity(timerManager.clock.hasStarted ? 0.0 : 1.0)
+					.animation(.default, value: timerManager.clock.isRunning)
 				}
-				.padding(.horizontal)
-				.monospacedDigit()
-				.font(.system(size: 30, weight: .semibold)) // adaptive size?
 				.opacity(settings.mode == .timer ? 0.9 : 0.0)
+				.padding()
 				
                 TimelineView(.animation) { context in
 					ZStack {
@@ -137,8 +156,11 @@ struct TimerView: View {
         .autoHideHomeIndicator(true)
         // Settings
         .sheet(isPresented: $showingSettings) {
-            SettingsView(settings: settings)
+            SettingsView()
         }
+		.onAppear {
+			// clock instance, change a color every 7 seconds ifRunning
+		}
 //        .onChange(of: scenePhase) {
 //            timerManager.settings.healthKitEnabled = timerManager.healthKitManager.checkAuthorization()
 //        }
@@ -190,7 +212,7 @@ struct TimerView: View {
 
 #Preview {
     TimerView()
-		.environment(TimerManager(clock: ClockModel(mode: .zen)))
+		.environment(TimerManager(clock: ClockModel(mode: .timer)))
         .environment(Settings())
 }
 

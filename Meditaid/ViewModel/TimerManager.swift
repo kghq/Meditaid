@@ -13,6 +13,9 @@ class TimerManager {
     
     // Clock & Settings
     var clock: ClockModel
+	
+	private var task: Task<Void, Never>?
+	private let clockTicker = ContinuousClock()
 
     // Healthkit
     var healthKitManager = HealthKitManager()
@@ -26,6 +29,18 @@ class TimerManager {
         guard !clock.isRunning else { return }
         
         clock.sessionDates == nil ? clock.sessionDates = [.now] : clock.sessionDates?.append(.now)
+		
+		// End when timer is up
+		var durationRemaining = clock.timerDuration
+		task = Task {
+			while !Task.isCancelled {
+				try? await clockTicker.sleep(for: .seconds(1))
+				durationRemaining -= 1
+				if durationRemaining == -1 {
+					end()
+				}
+			}
+		}
         
         // ActivityKit
 //        if !clock.hasStarted {
@@ -92,7 +107,6 @@ class TimerManager {
     }
     
 	init(clock: ClockModel) {
-		
 		self.clock = clock
 	}
 		

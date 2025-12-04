@@ -32,7 +32,7 @@ class Settings: Codable {
     var healthKitToggleTapCounter: Int = 0 {
         didSet { save() }
     }
-    
+	
     // Interval Notifications
     var intervalsAreOn = false {
         didSet { save() }

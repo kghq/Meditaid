@@ -16,7 +16,10 @@ class ClockModel: Codable {
     // Clock
     var isRunning = false
     var hasStarted = false
-    
+//	var isFinished: Bool {
+//		calculateTimeRemaining() <= 0
+//	}
+//    
     var sessionDates: [Date]? {
         didSet {
             guard let sessionDates else { return }
@@ -37,6 +40,17 @@ class ClockModel: Codable {
         }
     }
 	
+	// Zen
+	var pauses = [TimeInterval]()
+	var compoundedPauses: TimeInterval {
+		var compPauses = TimeInterval.zero
+		for pause in pauses {
+			compPauses += pause
+		}
+		return compPauses
+	}
+	
+	// Timer
 	var elapsedIntervals = [TimeInterval]()
 	var elapsed: TimeInterval {
 		var compElapsed = TimeInterval.zero
@@ -45,21 +59,9 @@ class ClockModel: Codable {
 		}
 		return compElapsed
 	}
-	
-	// Zen
-    var pauses = [TimeInterval]()
-    var compoundedPauses: TimeInterval {
-        var compPauses = TimeInterval.zero
-        for pause in pauses {
-            compPauses += pause
-        }
-        return compPauses
-    }
-	
-	// Timer
-	var timerDuration: TimeInterval = 600.0 {
+	var timerDuration: TimeInterval = 3700.0 {
 		didSet { save() }
-	}
+	} // make it reactive to user input, probably make it a computed property from two other properties: hours and minutes
     
     // Display
 	var timerCountingRange: Range<Date> {
@@ -99,13 +101,16 @@ class ClockModel: Codable {
 		}
 	}
 	
-	var isTimerFinished: Bool {
-		// TODO: check if that works. If true, run timerManager.end()
-		timerDuration == elapsed ? true : false
-	}
-	
 	func save() {
 		LoadSave.save(self, to: "clock.json")
+	}
+	
+	func calculateTimeRemaining() -> TimeInterval {
+		let lastStartTime = sessionDates?.last ?? Date.now
+		let targetEndTime = lastStartTime.addingTimeInterval(timerDuration - elapsed)
+		let timeRemaining = targetEndTime.timeIntervalSince(Date.now)
+		
+		return timeRemaining
 	}
 	
 	init(mode: Mode) {

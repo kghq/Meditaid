@@ -16,14 +16,16 @@ enum Route: Hashable {
 
 struct SettingsView: View {
     
+	@Environment(Settings.self) var settings
     @Environment(\.dismiss) var dismiss
     @State private var path = NavigationPath()
-    
-    @Bindable var settings: Settings
     
     var healthKitManager = HealthKitManager()
     
     var body: some View {
+		
+		@Bindable var settings = settings
+		
         NavigationStack(path: $path) {
             List {
                 // Choose Mode
@@ -88,6 +90,6 @@ struct SettingsView: View {
 }
 
 #Preview {
-    SettingsView(settings: Settings())
+    SettingsView()
         .preferredColorScheme(.dark)
 }
