@@ -23,7 +23,7 @@ enum Mode: String, Codable, AppEnum {
 class Settings: Codable {
     
     // General
-    var mode: Mode = .zen {
+    var mode: Mode = .timer { // change to zen after debugging
         didSet { save() }
     }
     var healthKitEnabled: Bool = false {

@@ -28,11 +28,11 @@ class TimerManager {
         clock.sessionDates == nil ? clock.sessionDates = [.now] : clock.sessionDates?.append(.now)
         
         // ActivityKit
-        if !clock.hasStarted {
-            activityKitManager.startActivity(startDate: .now, pauses: clock.pauses, isRunning: true)
-        } else {
-            activityKitManager.updateActivity(startDate: clock.sessionDates?[0] ?? .now, pauses: clock.pauses, isRunning: true)
-        }
+//        if !clock.hasStarted {
+//            activityKitManager.startActivity(startDate: .now, pauses: clock.pauses, isRunning: true)
+//        } else {
+//            activityKitManager.updateActivity(startDate: clock.sessionDates?[0] ?? .now, pauses: clock.pauses, isRunning: true)
+//        }
         
         clock.hasStarted = true
         clock.isRunning = true
@@ -48,7 +48,7 @@ class TimerManager {
         clock.sessionDates?.append(.now)
         
         // ActivityKit
-        activityKitManager.updateActivity(startDate: clock.sessionDates?[0] ?? .now, pauses: clock.pauses, isRunning: false)
+        // activityKitManager.updateActivity(startDate: clock.sessionDates?[0] ?? .now, pauses: clock.pauses, isRunning: false)
         
         clock.isRunning = false
         
@@ -64,9 +64,12 @@ class TimerManager {
         healthKitManager.saveMindfulSession(sessionDates: clock.sessionDates)
         
         // ActivityKit
-        activityKitManager.endActivity(startDate: clock.sessionDates?[0] ?? .now, pauses: clock.pauses, isRunning: false)
+        // activityKitManager.endActivity(startDate: clock.sessionDates?[0] ?? .now, pauses: clock.pauses, isRunning: false)
         
         clock.sessionDates = nil
+		
+		// Timer
+		clock.elapsedIntervals = []
         
         clock.isRunning = false
         clock.hasStarted = false
@@ -88,12 +91,16 @@ class TimerManager {
         LoadSave.save(clock, to: "clock.json")
     }
     
-    init() {
-        do {
-            try clock = LoadSave.load(from: "clock.json")
-        } catch {
-            print("Failed to load clock. Default.")
-            clock = ClockModel()
-        }
-    }
+	init(clock: ClockModel) {
+		
+		self.clock = clock
+	}
+		
+//        do {
+//            try clock = LoadSave.load(from: "clock.json")
+//        } catch {
+//            print("Failed to load clock. Default.")
+//			clock = ClockModel(mode: .timer) //change to zen after debugging
+//        }
+//    }
 }

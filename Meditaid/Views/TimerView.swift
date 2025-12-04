@@ -10,8 +10,11 @@ import SwiftUI
 
 struct TimerView: View {
     
-    @Environment(TimerManager.self) private var timerManager
-    @Environment(Settings.self) private var settings
+//    @Environment(TimerManager.self) private var timerManager
+//    @Environment(Settings.self) private var settings
+	
+	@State private var settings = Settings()
+	@State private var timerManager = TimerManager(clock: ClockModel(mode: .timer))
     
     // Hiding Status Bar
     @State private var showingSettings = false
@@ -31,26 +34,30 @@ struct TimerView: View {
     var body: some View {
         
         @Bindable var timerManager = timerManager
-        
+		
         VStack(spacing: 30) {
             ZStack {
                 
-				VStack {
-					Spacer()
-					Text("0:    1:    2:    3:    4:    5:")
-					Spacer()
-					// Text("3: 4: 5:")
+				ZStack {
+					
 					Circle()
 						.stroke(lineWidth: 6)
 						.frame(minWidth: 280, minHeight: 280)
-					Spacer()
-					Text(":5  :10  :15  :20  :30  :45")
-					// Text(":20 :30 :45")
-					Spacer()
+					
+					VStack {
+						Text("0:    1:    2:    3:    4:    5:")
+						Spacer()
+						// Text("3: 4: 5:")
+						Text(":5  :10  :15  :20  :30  :45")
+						// Text(":20 :30 :45")
+					}
+					.padding(.vertical, 60)
+					.opacity(timerManager.clock.hasStarted ? 0.0 : 0.9)
 				}
 				.padding(.horizontal)
 				.monospacedDigit()
-				.font(.system(size: 30, weight: .medium)) // adaptive size?
+				.font(.system(size: 30, weight: .semibold)) // adaptive size?
+				.opacity(settings.mode == .timer ? 0.9 : 0.0)
 				
                 TimelineView(.animation) { context in
 					ZStack {
@@ -183,7 +190,7 @@ struct TimerView: View {
 
 #Preview {
     TimerView()
-        .environment(TimerManager())
+		.environment(TimerManager(clock: ClockModel(mode: .zen)))
         .environment(Settings())
 }
 
