@@ -59,9 +59,15 @@ class ClockModel: Codable {
 		}
 		return compElapsed
 	}
-	var timerDuration: TimeInterval = 3700.0 {
+	var hours: TimeInterval = 0 {
 		didSet { save() }
-	} // make it reactive to user input, probably make it a computed property from two other properties: hours and minutes
+	}
+	var minutes: TimeInterval = 900 {
+		didSet { save() }
+	}
+	var timerDuration: TimeInterval {
+		hours + minutes
+	}
     
     // Display
 	var timerCountingRange: Range<Date> {

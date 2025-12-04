@@ -13,6 +13,7 @@ class TimerManager {
     
     // Clock & Settings
     var clock: ClockModel
+	var settings: Settings
 	
 	private var task: Task<Void, Never>?
 	private let clockTicker = ContinuousClock()
@@ -106,8 +107,9 @@ class TimerManager {
         LoadSave.save(clock, to: "clock.json")
     }
     
-	init(clock: ClockModel) {
+	init(clock: ClockModel, settings: Settings) {
 		self.clock = clock
+		self.settings = settings
 	}
 		
 //        do {

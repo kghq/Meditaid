@@ -8,22 +8,26 @@
 import AppIntents
 import Foundation
 
-enum Mode: String, Codable, AppEnum {
-    case zen, timer
+enum Mode: String, CaseIterable, Codable, Identifiable {
+    case zen = "Zen"
+	case timer = "Timer"
+	
+	var id: Self { self }
     
-    static var typeDisplayRepresentation: TypeDisplayRepresentation = "Mode"
-    
-    static var caseDisplayRepresentations: [Mode: DisplayRepresentation] = [
-        .zen: DisplayRepresentation(title: "Zen", image: .init(systemName: "figure.mind.and.body")),
-        .timer: DisplayRepresentation(title: "Timer", image: .init(systemName: "stopwatch"))
-    ]
+	// AppEnum
+//    static var typeDisplayRepresentation: TypeDisplayRepresentation = "Mode"
+//    
+//    static var caseDisplayRepresentations: [Mode: DisplayRepresentation] = [
+//        .zen: DisplayRepresentation(title: "Zen", image: .init(systemName: "figure.mind.and.body")),
+//        .timer: DisplayRepresentation(title: "Timer", image: .init(systemName: "stopwatch"))
+//    ]
 }
 
 @Observable
 class Settings: Codable {
     
     // General
-    var mode: Mode = .timer { // change to zen after debugging
+    var mode: Mode = .timer {
         didSet { save() }
     }
     var healthKitEnabled: Bool = false {

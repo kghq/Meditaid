@@ -56,17 +56,29 @@ struct TimerView: View {
 						}
 						Spacer()
 						HStack {
-							Text("05'")
+							Button("05'") {
+								timerManager.clock.minutes = 300
+							}
 							Spacer()
-							Text("10'")
+							Button("10'") {
+								timerManager.clock.minutes = 600
+							}
 							Spacer()
-							Text("15'")
+							Button("15'") {
+								timerManager.clock.minutes = 900
+							}
 							Spacer()
-							Text("20'")
+							Button("20'") {
+								timerManager.clock.minutes = 1200
+							}
 							Spacer()
-							Text("30'")
+							Button("30'") {
+								timerManager.clock.minutes = 1800
+							}
 							Spacer()
-							Text("45'")
+							Button("45'") {
+								timerManager.clock.minutes = 2700
+							}
 						}
 					}
 					.monospacedDigit()
@@ -212,7 +224,7 @@ struct TimerView: View {
 
 #Preview {
     TimerView()
-		.environment(TimerManager(clock: ClockModel(mode: .timer)))
+		.environment(TimerManager(clock: ClockModel(mode: .timer), settings: Settings()))
         .environment(Settings())
 }
 

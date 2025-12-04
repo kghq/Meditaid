@@ -27,17 +27,57 @@ struct SettingsView: View {
 		@Bindable var settings = settings
 		
         NavigationStack(path: $path) {
+			
+			// Picker
+			Picker("Mode", selection: $settings.mode) {
+				ForEach(Mode.allCases) { mode in
+					Text(mode.rawValue)
+						.tag(mode)
+				}
+			}
+			.pickerStyle(.palette)
+			.padding([.horizontal, .top])
+			
+			// List
             List {
-                // Choose Mode
-//                settings.mode == .zen ? Text("Zen Mode") : Text("Timer Mode")
-//                Section {
-//                    NavigationLink(value: Route.soundsAndHaptics) {
-//                        Text("Sounds and Haptics")
-//                    }
-//                } header: {
-//
-//                }
-                    
+                
+				Section {
+					VStack(alignment: .leading) {
+						if settings.mode == .zen {
+							ZStack {
+								RoundedRectangle(cornerRadius: 10)
+									.foregroundStyle(.gray)
+								Image(systemName: "figure.mind.and.body")
+									.font(.system(size: 30))
+							}
+							.frame(width: 50, height: 50)
+							Text("Zen")
+								.font(.system(size: 30, weight: .bold))
+								.fontWeight(.semibold)
+							Text("There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration.")
+								.padding(.top, 1)
+						} else {
+							ZStack {
+								RoundedRectangle(cornerRadius: 10)
+									.foregroundStyle(.gray)
+								Image(systemName: "stopwatch")
+									.font(.system(size: 30))
+							}
+							.frame(width: 50, height: 50)
+							Text("Timer")
+								.font(.system(size: 30, weight: .bold))
+							Text("All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary.")
+								.padding(.top, 3)
+						}
+					}
+				}
+				
+				if settings.mode == .timer {
+					Section {
+						Text("Sounds & Haptics")
+					}
+				}
+				
                 // HealthKit
                 Section {
                     HStack {
@@ -70,9 +110,10 @@ struct SettingsView: View {
                     }
                 }
             }
-            .navigationTitle("Meditaid")
-            // .navigationBarTitleDisplayMode(.inline) // then "Settings" title
-//            .navigationDestination(for: Route.self) { route in
+			.animation(.default, value: settings.mode)
+            //.navigationTitle("Meditaid")
+            .navigationBarTitleDisplayMode(.inline) // then "Settings" title
+//          .navigationDestination(for: Route.self) { route in
 //                switch route {
 //                default:
 //                    // SoundsAndHaptics(settings: settings)
@@ -92,4 +133,5 @@ struct SettingsView: View {
 #Preview {
     SettingsView()
         .preferredColorScheme(.dark)
+		.environment(Settings())
 }
