@@ -42,42 +42,54 @@ struct TimerView: View {
 					
 					VStack {
 						HStack {
-							Text("0h")
+							Button("0h") {
+								timerManager.clock.hours = 0
+							}
 							Spacer()
-							Text("1h")
+							Button("1h") {
+								timerManager.clock.hours = 3600
+							}
 							Spacer()
-							Text("2h")
+							Button("2h") {
+								timerManager.clock.hours = 2 * 3600
+							}
 							Spacer()
-							Text("3h")
+							Button("3h") {
+								timerManager.clock.hours = 3 * 3600
+							}
 							Spacer()
-							Text("4h")
+							Button("4h") {
+								timerManager.clock.hours = 4 * 3600
+							}
 							Spacer()
-							Text("5h")
+							Button("5h") {
+								timerManager.clock.hours = 5 * 3600
+							}
 						}
 						Spacer()
 						HStack {
 							Button("05'") {
-								timerManager.clock.minutes = 300
+								timerManager.clock.minutes = 5 * 60
 							}
 							Spacer()
 							Button("10'") {
-								timerManager.clock.minutes = 600
+								timerManager.clock.minutes = 10 * 60
 							}
 							Spacer()
 							Button("15'") {
-								timerManager.clock.minutes = 900
+								timerManager.clock.minutes = 15 * 60
 							}
 							Spacer()
 							Button("20'") {
-								timerManager.clock.minutes = 1200
+								timerManager.clock.minutes = 20 * 60
 							}
 							Spacer()
 							Button("30'") {
-								timerManager.clock.minutes = 1800
+								timerManager.clock.minutes = 30 * 60
 							}
 							Spacer()
 							Button("45'") {
-								timerManager.clock.minutes = 2700
+								timerManager.clock.minutes = 45 * 60
 							}
 						}
 					}
