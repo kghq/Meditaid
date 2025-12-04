@@ -54,11 +54,6 @@ class Settings: Codable {
     var sounds: Bool = false {
         didSet { save() }
     }
-
-    // Timer
-    var duration: Duration = .seconds(600) {
-        didSet { save() }
-    }
     
     var schemaVersion: Int? = 1
     
@@ -76,7 +71,6 @@ class Settings: Codable {
         case _lastChosenDuration = "lastChosenDuration"
         case _haptics = "haptics"
         case _sounds = "sounds"
-        case _duration = "duration"
         case _schemaVersion = "schemaVersion"
     }
 }

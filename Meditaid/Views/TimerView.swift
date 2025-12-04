@@ -34,17 +34,36 @@ struct TimerView: View {
         
         VStack(spacing: 30) {
             ZStack {
-
-                Spacer()
                 
+				VStack {
+					Spacer()
+					Text("0:    1:    2:    3:    4:    5:")
+					Spacer()
+					// Text("3: 4: 5:")
+					Circle()
+						.stroke(lineWidth: 6)
+						.frame(minWidth: 280, minHeight: 280)
+					Spacer()
+					Text(":5  :10  :15  :20  :30  :45")
+					// Text(":20 :30 :45")
+					Spacer()
+				}
+				.padding(.horizontal)
+				.monospacedDigit()
+				.font(.system(size: 30, weight: .medium)) // adaptive size?
+				
                 TimelineView(.animation) { context in
-                    Text(context.date, format: .timer(countingUpIn: timerManager.clock.timerCountingRange))
-                        .monospacedDigit()
-                        .font(.system(size: 60, weight: .medium))
+					ZStack {
+						if settings.mode == .zen {
+							Text(context.date, format: .timer(countingUpIn: timerManager.clock.timerCountingRange))
+						} else {
+							Text(context.date, format: .timer(countingDownIn: timerManager.clock.timerCountingRange))
+						}
+					}
+					.monospacedDigit()
+					.font(.system(size: 60, weight: .medium))
                 }
-
-                
-                Spacer()
+				
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(

@@ -35,6 +35,11 @@ class ClockModel: Codable {
         }
         return compPauses
     }
+	
+	// Timer
+	var duration: TimeInterval = 5.0 {
+		didSet { save() }
+	}
     
     // Display
     var timerCountingRange: Range<Date> {
@@ -48,6 +53,10 @@ class ClockModel: Codable {
             return Date.now + startTime.timeIntervalSince(sessionDates?.last ?? .now) + compoundedPauses..<Date.distantFuture
         }
     }
+	
+	func save() {
+		LoadSave.save(self, to: "settings.json")
+	}
     
     // CodingKeys
     enum CodingKeys: String, CodingKey {

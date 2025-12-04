@@ -21,7 +21,7 @@ struct Provider: TimelineProvider {
     // The brain of the Widget
     func getTimeline(in context: Context, completion: @escaping (Timeline<SimpleEntry>) -> Void) {
         var entries: [SimpleEntry] = [] // this is the timeline. array of data
-        let entry = SimpleEntry(date: Date(), text1: "You Got This App To Meditate", text2: "Do That.")
+        let entry = SimpleEntry(date: Date(), text1: "You Got This App To Meditate.", text2: "Do That.")
         
         // Generate a timeline
         // let currentDate = Date()
