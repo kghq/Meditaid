@@ -26,25 +26,26 @@ struct TimerView: View {
         }
     }
     
-    @Environment(\.scenePhase) private var scenePhase
     @State private var autoHide: Task<Void, Never>? = nil // managing the hiding of status bar
     private let buttonHaptics = UIImpactFeedbackGenerator(style: .medium)
+	@State private var ringColors = RingColors()
 
     var body: some View {
+		
+		@Bindable var timerManager = timerManager
 		
 		VStack(spacing: 0) {
             ZStack {
                 
 				ZStack {
-					Circle()
-						.stroke(lineWidth: 6)
+					ProgressRingView(ringColors: timerManager.ringColors.colors)
 						.frame(minWidth: 280, minHeight: 280)
 						.opacity(0.9)
 					
 					VStack {
-						HourButtonRow(timerManager: timerManager)
+						HourButtonRow(timerManager: timerManager, colors: $timerManager.ringColors.colors)
 						Spacer()
-						MinuteButtonRow(timerManager: timerManager)
+						MinuteButtonRow(timerManager: timerManager, colors: $timerManager.ringColors.colors)
 					}
 					.font(.system(size: 30, weight: .medium, design: .default))
 					.padding(.vertical, 70)
@@ -127,7 +128,7 @@ struct TimerView: View {
 								autoHide?.cancel()
 								hideStatusBarOnTap = false
 							} else {
-								settings.cancelWasTapped = false
+								settings.cancelWasTapped = true
 								showingCancelAlert = true
 							}
 						}
@@ -163,6 +164,20 @@ struct TimerView: View {
 		} message: {
 			Text("This will end the timer without logging Mindful Minutes.")
 		}
+//		.onAppear {
+//			//if timerManager.clock.isRunning {
+//				task = Task {
+//					while !Task.isCancelled {
+//						try? await sevenSecondsClock.sleep(for: .seconds(1))
+//						sevenSecondsCounter += 1
+////						if durationRemaining <= -1 { // change to % 7
+////							// more code to come
+////						}
+//						print("second")
+//					}
+//				}
+//			// }
+//		}
     }
     
     // Toggle Settings

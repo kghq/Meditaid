@@ -23,6 +23,9 @@ class TimerManager {
     
     // AppIntents & ActivityKit
     var activityKitManager = ActivityKitManager()
+	
+	// Colors
+	var ringColors = RingColors()
     
     // Start
     func start() {
@@ -34,14 +37,25 @@ class TimerManager {
 		// End when timer is up
 		if settings.mode == .timer {
 			var durationRemaining = clock.timerDuration - clock.elapsed
+			var sevenSecondsCounter = 0
 			task = Task {
 				while !Task.isCancelled {
 					try? await clockTicker.sleep(for: .seconds(1))
 					durationRemaining -= 1
+					sevenSecondsCounter += 1
 					if durationRemaining <= -1 {
 						end()
 					}
-					print(durationRemaining)
+					if sevenSecondsCounter % 7 == 0 {
+						let selectedPosition = Int.random(in: 0..<ringColors.colors.count)
+						let randomColor = TimerButtonValue.gradientColors.randomElement() ?? .blue
+						if selectedPosition == 0 || selectedPosition == ringColors.colors.count - 1 {
+							ringColors.colors[0] = randomColor
+							ringColors.colors[ringColors.colors.count - 1] = randomColor
+						} else {
+							ringColors.colors[selectedPosition] = randomColor
+						}
+					}
 				}
 			}
 		}
