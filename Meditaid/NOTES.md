@@ -1,13 +1,9 @@
 # NOTES
 
 ## Timer
-When this mode on, a progress bar below the timer always visible (even when not running)
+Animated Bar
 A grid of 0: hours options and :15 minutes options. Option pressed has some color. Same font as clock.
-Gradient circle progress bar.
-All has slightly reduced opacity.
-When timer starts, all disappears besides the clock and progress bar.
-Notification at the end, or AlarmKit, then? Does it support a single chime and a tap instead of continuous alarm and vibrating?
-Live Activity Notifications instead of regular system notifications?
+Notification at the end, or AlarmKit, then, or regular notifications? Does it support a single chime and a tap instead of continuous alarm and vibrating?
 Alwasy reverts back to the last duration user set. After another launch, after changing back to the mode, after finishing the countdown.
 In Live activity, a circular progress bar, in minimal, this instead of minutes
 ### Just to learn, not in the final version
@@ -30,6 +26,7 @@ Complications
 ## App Icon
 
 ## Other Features
+Give ability to change values of the buttons
 Glass font for timer and buttons
 Green tint for glass
 Accessibility (actually should be quite easy in such a simple app. Consult HWS.)
@@ -49,6 +46,7 @@ Spotlight
 Control center icon and lock screen
 Lock Screen widgets (the ones under the clock, like Weather or Home)
 Focus
+When Zen turned on (or both), turn on do not disturb.
 ### Shortcuts
 Start Zen mode
 Start a timer
@@ -158,3 +156,13 @@ Breathing circle with one over it, in color of background, indicating time passe
             }
         }
     }
+
+// Interval haptics and sounds
+//            .onChange(of: model.elapsed) { oldValue, newValue in
+//                let seconds = newValue.components.seconds
+//                if let intervalDuration = settings.intervalDuration {
+//                    if seconds % intervalDuration.components.seconds == 0 && seconds != 0 {
+//                        UIImpactFeedbackGenerator(style: .medium).impactOccurred(intensity: 0.4)
+//                    }
+//                }
+//            }

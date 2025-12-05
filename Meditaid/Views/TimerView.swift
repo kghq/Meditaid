@@ -31,81 +31,31 @@ struct TimerView: View {
 
     var body: some View {
 		
-        VStack(spacing: 30) {
+		VStack(spacing: 0) {
             ZStack {
                 
 				ZStack {
-					
 					Circle()
 						.stroke(lineWidth: 6)
 						.frame(minWidth: 280, minHeight: 280)
+						.opacity(0.9)
 					
 					VStack {
-						HStack {
-							Button("0h") {
-								timerManager.clock.hours = 0
-							}
-							Spacer()
-							Button("1h") {
-								timerManager.clock.hours = 3600
-							}
-							Spacer()
-							Button("2h") {
-								timerManager.clock.hours = 2 * 3600
-							}
-							Spacer()
-							Button("3h") {
-								timerManager.clock.hours = 3 * 3600
-							}
-							Spacer()
-							Button("4h") {
-								timerManager.clock.hours = 4 * 3600
-							}
-							Spacer()
-							Button("5h") {
-								timerManager.clock.hours = 5 * 3600
-							}
-						}
+						HourButtonRow(timerManager: timerManager)
 						Spacer()
-						HStack {
-							Button("05'") {
-								timerManager.clock.minutes = 5 * 60
-							}
-							Spacer()
-							Button("10'") {
-								timerManager.clock.minutes = 10 * 60
-							}
-							Spacer()
-							Button("15'") {
-								timerManager.clock.minutes = 15 * 60
-							}
-							Spacer()
-							Button("20'") {
-								timerManager.clock.minutes = 20 * 60
-							}
-							Spacer()
-							Button("30'") {
-								timerManager.clock.minutes = 30 * 60
-							}
-							Spacer()
-							Button("45'") {
-								timerManager.clock.minutes = 45 * 60
-							}
-						}
+						MinuteButtonRow(timerManager: timerManager)
 					}
-					.monospacedDigit()
-					.font(.system(size: 30, weight: .semibold))
-					.padding(.vertical, 40)
+					.font(.system(size: 30, weight: .medium, design: .default))
+					.padding(.vertical, 70)
 					.opacity(timerManager.clock.hasStarted ? 0.0 : 1.0)
 					.animation(.default, value: timerManager.clock.isRunning)
 				}
-				.opacity(settings.mode == .timer ? 0.9 : 0.0)
-				.padding()
+				.opacity(settings.mode == .timer ? 1.0 : 0.0)
 				
                 TimelineView(.animation) { context in
 					ZStack {
 						if settings.mode == .zen {
-							Text(context.date, format: .timer(countingUpIn: timerManager.clock.timerCountingRange))
+							Text(context.date, format: .timer(countingUpIn: timerManager.clock.zenCountingRange))
 						} else {
 							Text(context.date, format: .timer(countingDownIn: timerManager.clock.timerCountingRange))
 						}
@@ -123,6 +73,12 @@ struct TimerView: View {
             .onTapGesture {
                 handleScreenTap()
             }
+			.padding()
+			.autoHideHomeIndicator(true)
+			
+			Rectangle()
+				.frame(maxWidth: .infinity, maxHeight: 1)
+				.foregroundStyle(.gray.opacity(timerManager.clock.hasStarted ? 0.0 : 0.25))
             
             // Buttons
             ZStack {
@@ -136,16 +92,7 @@ struct TimerView: View {
                         hideStatusBarOnTap = false
                     }
                     .disabled(!timerManager.clock.hasStarted)
-                    .font(.title3)
-                    .bold()
-                    .foregroundStyle(timerManager.clock.hasStarted ? .red.opacity(timerManager.clock.isRunning ? 0.7 : 0.8) : .secondary)
-                    .padding()
-    //                Button("Reset") {
-    //                    timerManager.reset()
-    //                    buttonHaptics.impactOccurred()
-    //                    autoHide?.cancel()
-    //                    hideStatusBarOnTap = false
-    //                }
+                    .foregroundStyle(timerManager.clock.hasStarted ? .red.opacity(timerManager.clock.isRunning ? 0.4 : 0.6) : .secondary)
 
                     Spacer()
                     
@@ -156,28 +103,42 @@ struct TimerView: View {
                         autoHide?.cancel()
                         handleButtonHide()
                     }
-                    .font(.title3)
-                    .bold()
-                    .foregroundStyle(timerManager.clock.hasStarted ? .blue.opacity(timerManager.clock.isRunning ? 0.7 : 0.8) : .green.opacity(0.9))
-                    .padding()
+					.foregroundStyle(timerManager.clock.hasStarted ? (timerManager.clock.isRunning ? .blue.opacity(0.4) : .green.opacity(0.6)) : .green.opacity(0.9))
                 }
+				.font(.title3)
+				.bold()
                 
                 // Settings
-                Button("Settings") {
-                    toggleSettings()
-                }
-                .disabled(timerManager.clock.hasStarted)
-                .font(.title3)
-                .bold()
-                .opacity(timerManager.clock.hasStarted ? 0.0 : 0.7)
-                .padding()
-            }
+				ZStack {
+					Button("Settings") {
+						toggleSettings()
+					}
+					.disabled(timerManager.clock.hasStarted)
+					.font(.title3)
+					.bold()
+					.opacity(timerManager.clock.hasStarted ? 0.0 : 0.6)
+					
+					if settings.healthKitEnabled && timerManager.clock.hasStarted {
+						Button("Cancel") { // show up when paused
+							timerManager.cancel()
+							autoHide?.cancel()
+							hideStatusBarOnTap = false
+						}
+						.disabled(timerManager.clock.isRunning)
+						.font(.title3)
+						.bold()
+						.foregroundStyle(.yellow.opacity(timerManager.clock.isRunning ? 0.0 : 0.6))
+					}
+				}
+			}
+			.padding()
+			.frame(maxWidth: .infinity, maxHeight: 55)
+			.background(.gray.opacity(timerManager.clock.hasStarted ? 0.0 : 0.1))
+			.ignoresSafeArea()
         }
-        .padding()
         .preferredColorScheme(.dark)
         .statusBarHidden(statusBarHidden)
         .animation(.default, value: [statusBarHidden, timerManager.clock.hasStarted, timerManager.clock.isRunning])
-        .autoHideHomeIndicator(true)
         // Settings
         .sheet(isPresented: $showingSettings) {
             SettingsView()
@@ -185,9 +146,6 @@ struct TimerView: View {
 		.onAppear {
 			// clock instance, change a color every 7 seconds ifRunning
 		}
-//        .onChange(of: scenePhase) {
-//            timerManager.settings.healthKitEnabled = timerManager.healthKitManager.checkAuthorization()
-//        }
     }
     
     // Toggle Settings
@@ -236,20 +194,6 @@ struct TimerView: View {
 
 #Preview {
     TimerView()
-		.environment(TimerManager(clock: ClockModel(mode: .timer), settings: Settings()))
+		.environment(TimerManager(clock: ClockModel(), settings: Settings()))
         .environment(Settings())
 }
-
-// Interval haptics and sounds
-//            .onChange(of: model.elapsed) { oldValue, newValue in
-//                let seconds = newValue.components.seconds
-//                if let intervalDuration = settings.intervalDuration {
-//                    if seconds % intervalDuration.components.seconds == 0 && seconds != 0 {
-//                        UIImpactFeedbackGenerator(style: .medium).impactOccurred(intensity: 0.4)
-//                    }
-//                }
-//            }
-
-//Text(context.date, format: .timer(countingUpIn: (timerManager.isRunning ?
-//    (timerManager.controlDate + timerManager.compoundedRuns) : (Date.now + timerManager.compoundedRuns))..<Date.distantFuture
-//))

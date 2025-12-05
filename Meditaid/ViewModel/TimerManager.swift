@@ -26,19 +26,22 @@ class TimerManager {
     
     // Start
     func start() {
-        
+
         guard !clock.isRunning else { return }
         
         clock.sessionDates == nil ? clock.sessionDates = [.now] : clock.sessionDates?.append(.now)
 		
 		// End when timer is up
-		var durationRemaining = clock.timerDuration
-		task = Task {
-			while !Task.isCancelled {
-				try? await clockTicker.sleep(for: .seconds(1))
-				durationRemaining -= 1
-				if durationRemaining == -1 {
-					end()
+		if settings.mode == .timer {
+			var durationRemaining = clock.timerDuration - clock.elapsed
+			task = Task {
+				while !Task.isCancelled {
+					try? await clockTicker.sleep(for: .seconds(1))
+					durationRemaining -= 1
+					if durationRemaining <= -1 {
+						end()
+					}
+					print(durationRemaining)
 				}
 			}
 		}
@@ -62,6 +65,8 @@ class TimerManager {
         guard clock.isRunning else { return }
         
         clock.sessionDates?.append(.now)
+		
+		task?.cancel()
         
         // ActivityKit
         // activityKitManager.updateActivity(startDate: clock.sessionDates?[0] ?? .now, pauses: clock.pauses, isRunning: false)
@@ -75,6 +80,8 @@ class TimerManager {
     func end() {
         
         guard clock.hasStarted else { return }
+		
+		task?.cancel()
         
         // HealthKit
         healthKitManager.saveMindfulSession(sessionDates: clock.sessionDates)
@@ -94,8 +101,16 @@ class TimerManager {
     }
     
     // Reset: end with no HealthKit log
-    func reset() {
+    func cancel() {
         clock.sessionDates = nil
+		
+		task?.cancel()
+		
+		// ActivityKit
+		// activityKitManager.endActivity(startDate: clock.sessionDates?[0] ?? .now, pauses: clock.pauses, isRunning: false)
+		
+		// Timer
+		clock.elapsedIntervals = []
         
         clock.isRunning = false
         clock.hasStarted = false

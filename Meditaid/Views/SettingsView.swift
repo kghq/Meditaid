@@ -10,15 +10,15 @@ import SwiftData
 import SwiftUI
 
 // Navigation
-enum Route: Hashable {
-    case soundsAndHaptics
-}
+//enum Route: Hashable {
+//    case soundsAndHaptics
+//}
 
 struct SettingsView: View {
     
 	@Environment(Settings.self) var settings
     @Environment(\.dismiss) var dismiss
-    @State private var path = NavigationPath()
+    // @State private var path = NavigationPath()
     
     var healthKitManager = HealthKitManager()
     
@@ -26,7 +26,7 @@ struct SettingsView: View {
 		
 		@Bindable var settings = settings
 		
-        NavigationStack(path: $path) {
+        NavigationStack {
 			
 			// Picker
 			Picker("Mode", selection: $settings.mode) {
@@ -74,7 +74,9 @@ struct SettingsView: View {
 				
 				if settings.mode == .timer {
 					Section {
-						Text("Sounds & Haptics")
+						NavigationLink("Sounds & Haptics") {
+							SoundsAndHapticsView(dismiss: dismiss)
+						}
 					}
 				}
 				
@@ -111,18 +113,18 @@ struct SettingsView: View {
                 }
             }
 			.animation(.default, value: settings.mode)
-            //.navigationTitle("Meditaid")
+            .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline) // then "Settings" title
 //          .navigationDestination(for: Route.self) { route in
 //                switch route {
 //                default:
-//                    // SoundsAndHaptics(settings: settings)
+//                    SoundsAndHapticsView()
 //                }
 //            }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Done") {
-                        dismiss()
+						dismiss()
                     }
                 }
             }

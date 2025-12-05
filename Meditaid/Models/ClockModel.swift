@@ -10,8 +10,6 @@ import Observation
 
 @Observable
 class ClockModel: Codable {
-	
-	var mode: Mode
     
     // Clock
     var isRunning = false
@@ -68,42 +66,25 @@ class ClockModel: Codable {
 	var timerDuration: TimeInterval {
 		hours + minutes
 	}
-    
-    // Display
+	
+	// Display
+	var zenCountingRange: Range<Date> {
+		guard let startTime = sessionDates?.first else { return Date.now..<Date.distantFuture }
+		let adjustedStartDate = startTime.addingTimeInterval(compoundedPauses)
+		
+		if isRunning {
+			return adjustedStartDate..<Date.distantFuture
+		} else {
+			return Date.now + startTime.timeIntervalSince(sessionDates?.last ?? .now) + compoundedPauses..<Date.distantFuture
+		}
+	}
 	var timerCountingRange: Range<Date> {
-		
-		var startTime = Date.now
-		var adjustedStartDate = Date.now
-		
-		switch mode {
-			
-		case .zen:
-			
-			if let zenStartTime = sessionDates?.first {
-				startTime = zenStartTime
-			} else {
-				return Date.now..<Date.distantFuture
-			}
-			
-			adjustedStartDate = startTime.addingTimeInterval(compoundedPauses)
-			
-			if isRunning {
-				return adjustedStartDate..<Date.distantFuture
-			} else {
-				let startDate = Date.now + startTime.timeIntervalSince(sessionDates?.last ?? .now) + compoundedPauses
-				return startDate..<Date.distantFuture
-			}
-		case .timer:
-			
-			adjustedStartDate = startTime.addingTimeInterval(elapsed)
-			
-			if isRunning, let lastDate = sessionDates?.last {
-				let endDate = lastDate.addingTimeInterval(timerDuration - elapsed)
-				return lastDate..<endDate
-			} else {
-				let endDate = Date.now.addingTimeInterval(timerDuration - elapsed)
-				return Date.now..<endDate
-			}
+		if isRunning, let lastDate = sessionDates?.last {
+			let endDate = lastDate.addingTimeInterval(timerDuration - elapsed)
+			return lastDate..<endDate
+		} else {
+			let endDate = Date.now.addingTimeInterval(timerDuration - elapsed)
+			return Date.now..<endDate
 		}
 	}
 	
@@ -118,17 +99,15 @@ class ClockModel: Codable {
 		
 		return timeRemaining
 	}
-	
-	init(mode: Mode) {
-		self.mode = mode
-	}
     
     // CodingKeys
     enum CodingKeys: String, CodingKey {
-		case _mode = "mode"
         case _isRunning = "isRunning"
         case _hasStarted = "hasStarted"
         case _sessionDates = "sessionDates"
         case _pauses = "pauses"
+		case _elapsedIntervals = "elapsedIntervals"
+		case _hours = "hours"
+		case _minutes = "minutes"
     }
 }

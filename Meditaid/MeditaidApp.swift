@@ -33,7 +33,7 @@ struct MeditaidApp: App {
 			let clock: ClockModel = try LoadSave.load(from: "clock.json")
 			_timerManager = State(initialValue: TimerManager(clock: clock, settings: loadedSettings))
         } catch {
-			_timerManager = State(initialValue: TimerManager(clock: ClockModel(mode: .zen), settings: Settings()))
+			_timerManager = State(initialValue: TimerManager(clock: ClockModel(), settings: Settings()))
             _settings = State(initialValue: Settings())
             print("Error loading Clock and Settings. Loading defaults.")
         }
