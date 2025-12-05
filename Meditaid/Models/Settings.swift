@@ -36,6 +36,9 @@ class Settings: Codable {
     var healthKitToggleTapCounter: Int = 0 {
         didSet { save() }
     }
+	var cancelWasTapped: Bool = false {
+		didSet { save() }
+	}
 	
     // Interval Notifications
     var intervalsAreOn = false {
@@ -70,6 +73,7 @@ class Settings: Codable {
         case _mode = "mode"
         case _healthKitEnabled = "healthKitEnabled"
         case _healthKitToggleTapCounter = "healthKitToggleTapCounter"
+		case _cancelWasTapped = "cancelWasTapped"
         case _intervalsAreOn = "intervalsAreOn"
         case _intervalOptions = "intervalOptions"
         case _lastChosenDuration = "lastChosenDuration"

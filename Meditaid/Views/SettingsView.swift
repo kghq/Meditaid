@@ -54,7 +54,7 @@ struct SettingsView: View {
 							Text("Zen")
 								.font(.system(size: 30, weight: .bold))
 								.fontWeight(.semibold)
-							Text("There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration.")
+							Text("This mode only measures time, and logs Mindful Minutes to Apple Health, if you choose so.")
 								.padding(.top, 1)
 						} else {
 							ZStack {
@@ -66,7 +66,7 @@ struct SettingsView: View {
 							.frame(width: 50, height: 50)
 							Text("Timer")
 								.font(.system(size: 30, weight: .bold))
-							Text("All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary.")
+							Text("Countdown timer will notify you when your session ends, or end silently, if you do that in settings.")
 								.padding(.top, 3)
 						}
 					}

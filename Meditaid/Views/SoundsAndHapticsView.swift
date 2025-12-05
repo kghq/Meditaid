@@ -22,7 +22,7 @@ struct SoundsAndHapticsView: View {
 		Form {
 			Section {
 				Toggle("Haptics", isOn: $hapticsOn)
-				Toggle("Alarm", isOn: $alarmOn)
+				Toggle("Sound", isOn: $alarmOn)
 			} header: {
 				Text("Get notified when session ends")
 			}

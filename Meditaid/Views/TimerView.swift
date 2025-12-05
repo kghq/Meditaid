@@ -17,6 +17,7 @@ struct TimerView: View {
     // Hiding Status Bar
     @State private var showingSettings = false
     @State private var hideStatusBarOnTap = false
+	@State private var showingCancelAlert = false
     private var statusBarHidden: Bool {
         if timerManager.clock.hasStarted {
             return !hideStatusBarOnTap
@@ -120,9 +121,15 @@ struct TimerView: View {
 					
 					if settings.healthKitEnabled && timerManager.clock.hasStarted {
 						Button("Cancel") { // show up when paused
-							timerManager.cancel()
-							autoHide?.cancel()
-							hideStatusBarOnTap = false
+							
+							if settings.cancelWasTapped {
+								timerManager.cancel()
+								autoHide?.cancel()
+								hideStatusBarOnTap = false
+							} else {
+								settings.cancelWasTapped = false
+								showingCancelAlert = true
+							}
 						}
 						.disabled(timerManager.clock.isRunning)
 						.font(.title3)
@@ -145,6 +152,16 @@ struct TimerView: View {
         }
 		.onAppear {
 			// clock instance, change a color every 7 seconds ifRunning
+		}
+		.alert("Confirm Cancellation", isPresented: $showingCancelAlert) {
+			Button("Cancel", role: .destructive) {
+				timerManager.cancel()
+				autoHide?.cancel()
+				hideStatusBarOnTap = false
+			}
+			Button("Back", role: .cancel) { }
+		} message: {
+			Text("This will end the timer without logging Mindful Minutes.")
 		}
     }
     
