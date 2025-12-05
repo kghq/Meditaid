@@ -81,6 +81,9 @@ class TimerManager {
         clock.sessionDates?.append(.now)
 		
 		task?.cancel()
+		
+		// HealthKit
+		healthKitManager.saveMindfulSession(sessionDates: clock.sessionDates)
         
         // ActivityKit
         // activityKitManager.updateActivity(startDate: clock.sessionDates?[0] ?? .now, pauses: clock.pauses, isRunning: false)
@@ -96,9 +99,11 @@ class TimerManager {
         guard clock.hasStarted else { return }
 		
 		task?.cancel()
+		
+		clock.sessionDates?.append(.now)
         
         // HealthKit
-        healthKitManager.saveMindfulSession(sessionDates: clock.sessionDates)
+		healthKitManager.saveMindfulSession(sessionDates: clock.sessionDates)
         
         // ActivityKit
         // activityKitManager.endActivity(startDate: clock.sessionDates?[0] ?? .now, pauses: clock.pauses, isRunning: false)

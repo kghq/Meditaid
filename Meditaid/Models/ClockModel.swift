@@ -81,6 +81,9 @@ class ClockModel: Codable {
 	var timerCountingRange: Range<Date> {
 		if isRunning, let lastDate = sessionDates?.last {
 			let endDate = lastDate.addingTimeInterval(timerDuration - elapsed)
+			if lastDate > endDate {
+				return endDate..<endDate
+			}
 			return lastDate..<endDate
 		} else {
 			let endDate = Date.now.addingTimeInterval(timerDuration - elapsed)

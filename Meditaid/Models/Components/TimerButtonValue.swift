@@ -28,12 +28,12 @@ struct TimerButtonValue: Identifiable {
 	// later var timerColor: RGBColor = RGBColor(red: 1.0, green: 0.0, blue: 0.0)
 	
 	static let minutes: [TimerButtonValue] = [
-		TimerButtonValue(label: "5'", duration: 5 * 60, color: .red),
-		TimerButtonValue(label: "10'", duration: 10 * 60, color: .yellow),
+		TimerButtonValue(label: "5'", duration: 5, color: .red),
+		TimerButtonValue(label: "10'", duration: 10, color: .yellow),
 		TimerButtonValue(label: "15'", duration: 15 * 60, color: .orange),
-		TimerButtonValue(label: "20'", duration: 20 * 60, color: .green),
-		TimerButtonValue(label: "30'", duration: 30 * 60, color: .blue),
-		TimerButtonValue(label: "45'", duration: 45 * 60, color: .cyan)
+		TimerButtonValue(label: "20'", duration: 60, color: .green),
+		TimerButtonValue(label: "30'", duration: 1 * 60, color: .blue),
+		TimerButtonValue(label: "45'", duration: 2 * 60, color: .cyan)
 	]
 	
 	static let hours: [TimerButtonValue] = [

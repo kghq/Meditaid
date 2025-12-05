@@ -40,7 +40,7 @@ struct TimerView: View {
 				ZStack {
 					ProgressRingView(ringColors: timerManager.ringColors.colors)
 						.frame(minWidth: 280, minHeight: 280)
-						.opacity(0.9)
+						.opacity(0.8)
 					
 					VStack {
 						HourButtonRow(timerManager: timerManager, colors: $timerManager.ringColors.colors)
@@ -77,6 +77,7 @@ struct TimerView: View {
             }
 			.padding()
 			.autoHideHomeIndicator(true)
+			.opacity(timerManager.clock.isRunning ? 0.7 : 1.0)
 			
 			Rectangle()
 				.frame(maxWidth: .infinity, maxHeight: 1)
