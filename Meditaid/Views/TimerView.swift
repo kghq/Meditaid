@@ -38,43 +38,39 @@ struct TimerView: View {
 			
 			ZStack {
 				
-				ZStack {
+				VStack {
 					
 					// Background
-					ZStack {
-						RoundedRectangle(cornerRadius: 20)
-							.stroke(style: StrokeStyle(lineWidth: 1))
-							.foregroundStyle(.primary.opacity(timerManager.clock.hasStarted ? 0.0 : 0.2))
-						RoundedRectangle(cornerRadius: 20)
-							.foregroundStyle(.secondary.opacity(timerManager.clock.hasStarted ? 0.0 : 0.1))
-					}
+//					ZStack {
+//						RoundedRectangle(cornerRadius: 20)
+//							.stroke(style: StrokeStyle(lineWidth: 1))
+//							.foregroundStyle(.primary.opacity(timerManager.clock.hasStarted ? 0.0 : 0.2))
+//						RoundedRectangle(cornerRadius: 20)
+//							.foregroundStyle(.secondary.opacity(timerManager.clock.hasStarted ? 0.0 : 0.1))
+//					}
 					
-					VStack {
-						HourButtonRow(timerManager: timerManager, colors: $timerManager.ringColors.colors)
-						//					Rectangle()
-						//						.frame(maxWidth: .infinity, maxHeight: 1)
-						//						.foregroundStyle(.secondary.opacity(0.3))
-						//						.padding(.horizontal)
-						Spacer()
-						//					Rectangle()
-						//						.frame(maxWidth: .infinity, maxHeight: 1)
-						//						.foregroundStyle(.secondary.opacity(0.3))
-						//						.padding(.horizontal)
-						MinuteButtonRow(timerManager: timerManager, colors: $timerManager.ringColors.colors)
-					}
-					.font(.system(size: 28, weight: .regular, design: .default))
-					.padding(.vertical)
-					.opacity(timerManager.clock.hasStarted ? 0.0 : 1.0)
-					.animation(.default, value: timerManager.clock.isRunning)
-				}
-				.opacity(settings.mode == .timer ? 1.0 : 0.0)
+//					VStack {
+//						HourButtonRow(timerManager: timerManager, colors: $timerManager.ringColors.colors)
+//						//					Rectangle()
+//						//						.frame(maxWidth: .infinity, maxHeight: 1)
+//						//						.foregroundStyle(.secondary.opacity(0.3))
+//						//						.padding(.horizontal)
+//						//					Rectangle()
+//						//						.frame(maxWidth: .infinity, maxHeight: 1)
+//						//						.foregroundStyle(.secondary.opacity(0.3))
+//						//						.padding(.horizontal)
+//						MinuteButtonRow(timerManager: timerManager, colors: $timerManager.ringColors.colors)
+//					}
+//					.font(.system(size: 28, weight: .regular, design: .default))
+//					// .padding(.vertical)
+//					.opacity(timerManager.clock.hasStarted ? 0.0 : 1.0)
+//					.animation(.default, value: timerManager.clock.isRunning)
 				
 				TimelineView(.animation) { context in
 					ZStack {
-						ProgressRingView(ringColors: timerManager.ringColors.colors)
+						ProgressRingView2(ringColors: timerManager.ringColors.colors)
 							.frame(minWidth: 280, minHeight: 280)
 							.opacity(0.8)
-							.padding(.horizontal)
 							.opacity(settings.mode == .timer ? 1.0 : 0.0)
 						// .animation(.default, value: timerManager.clock.hasStarted)
 						
@@ -88,20 +84,44 @@ struct TimerView: View {
 					.font(.system(size: 70, weight: .medium))
 				}
 				
+					VStack {
+						HourButtonRow(timerManager: timerManager, colors: $timerManager.ringColors.colors)
+						Rectangle()
+							.frame(maxWidth: .infinity, maxHeight: 1)
+							.padding(.horizontal, 30)
+							.foregroundStyle(.secondary.opacity(0.2))
+						MinuteButtonRow(timerManager: timerManager, colors: $timerManager.ringColors.colors)
+					}
+					.font(.system(size: 28, weight: .regular, design: .default))
+					.opacity(timerManager.clock.hasStarted ? 0.0 : 1.0)
+					.animation(.default, value: timerManager.clock.isRunning)
+					.opacity(settings.mode == .timer ? 1.0 : 0.0)
+					.background(
+						ZStack {
+							RoundedRectangle(cornerRadius: 20)
+								.stroke(style: StrokeStyle(lineWidth: 1))
+								.foregroundStyle(.primary.opacity(timerManager.clock.hasStarted ? 0.0 : 0.2))
+							RoundedRectangle(cornerRadius: 20)
+								.foregroundStyle(.secondary.opacity(timerManager.clock.hasStarted ? 0.0 : 0.1))
+						}
+					)
+				}
+				
 			}
-			.frame(maxWidth: .infinity, maxHeight: 550)
-			.onTapGesture {
-				handleScreenTap()
-			}
+			.frame(maxWidth: .infinity, maxHeight: 650)
 			.padding()
 			.preferredColorScheme(.dark)
 			.autoHideHomeIndicator(true)
 			.opacity(timerManager.clock.isRunning ? 0.7 : 1.0)
 			// .preferredColorScheme(timerManager.clock.hasStarted ? .dark : nil)
-			.statusBarHidden(statusBarHidden)
 			.toolbarBackground(.gray.opacity(0.04), for: .bottomBar)
 			.toolbarBackgroundVisibility(.hidden, for: .bottomBar)
 			.animation(.default, value: [statusBarHidden, timerManager.clock.hasStarted, timerManager.clock.isRunning])
+			.onTapGesture {
+				if timerManager.clock.hasStarted {
+					handleScreenTap()
+				}
+			}
 			// Settings
 			.sheet(isPresented: $showingSettings) {
 				SettingsView()
@@ -152,7 +172,9 @@ struct TimerView: View {
 								timerManager.clock.isRunning ? timerManager.pause() : timerManager.start()
 								buttonHaptics.impactOccurred()
 								autoHide?.cancel()
-								handleButtonHide()
+								withAnimation(.default) {
+									hideStatusBarOnTap = false
+								}
 							}
 							.foregroundStyle(timerManager.clock.hasStarted ? (timerManager.clock.isRunning ? .blue.opacity(0.4) : .green.opacity(0.6)) : .green.opacity(0.9))
 							.disabled(timerManager.clock.timerDuration == 0)
@@ -209,6 +231,7 @@ struct TimerView: View {
 			//			// }
 			//		}
 		}
+		.statusBarHidden(statusBarHidden)
 	}
     
     // Toggle Settings
@@ -222,37 +245,39 @@ struct TimerView: View {
         hideStatusBarOnTap = false
     }
     
-    private func handleScreenTap() {
-        
-        autoHide?.cancel()
-        
-        if timerManager.clock.hasStarted {
-            withAnimation(.default) {
-                hideStatusBarOnTap.toggle()
-            }
-            
-            guard autoHide == nil else { return }
-            
-            autoHide = Task {
-                do {
-                    try await Task.sleep(for: .seconds(3))
-                    
-                    withAnimation(.default) {
-                        hideStatusBarOnTap.toggle()
-                    }
-                    
-                    autoHide = nil
-                } catch {
-                    print(error.localizedDescription)
-                    autoHide = nil
-                }
-            }
-//        } else {
-//            withAnimation(.default) {
-//                hideStatusBarOnTap.toggle()
-//            }
-        }
-    }
+	private func handleScreenTap() {
+		
+		print("Autohide triggered")
+		
+		autoHide?.cancel()
+		
+		if timerManager.clock.hasStarted {
+			withAnimation(.default) {
+				hideStatusBarOnTap.toggle()
+			}
+			
+			guard autoHide == nil else { return }
+			
+			autoHide = Task {
+				do {
+					try await Task.sleep(for: .seconds(3))
+					
+					withAnimation(.default) {
+						hideStatusBarOnTap.toggle()
+					}
+					
+					autoHide = nil
+				} catch {
+					print(error.localizedDescription)
+					autoHide = nil
+				}
+			}
+		} //else {
+//			withAnimation(.default) {
+//				hideStatusBarOnTap.toggle()
+//			}
+//		}
+	}
 }
 
 #Preview {

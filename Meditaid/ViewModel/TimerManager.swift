@@ -131,7 +131,7 @@ class TimerManager {
         clock.isRunning = false
         clock.hasStarted = false
         
-        save()
+        save() 
     }
     
     func save() {
