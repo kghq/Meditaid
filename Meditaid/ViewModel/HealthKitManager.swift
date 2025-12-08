@@ -30,10 +30,10 @@ class HealthKitManager {
 	
 	func saveMindfulSession(sessionDates: [Date]?) {
 		
-		if let sessionDates = sessionDates {
-			if sessionDates.count > 1 {
-				let startDate = sessionDates[sessionDates.count - 2]
-				let endDate = sessionDates[sessionDates.count - 1]
+		if let sessionDates = sessionDates, sessionDates.count >= 2 {
+			for i in stride(from: 0, to: sessionDates.count - 1, by: 2) {
+				let startDate = sessionDates[i]
+				let endDate = sessionDates[i + 1]
 				
 				let mindfulSample = HKCategorySample(
 					type: mindfulType,
@@ -51,5 +51,27 @@ class HealthKitManager {
 				}
 			}
 		}
+		
+//		if let sessionDates = sessionDates {
+//			if sessionDates.count > 1 {
+//				let startDate = sessionDates[sessionDates.count - 2]
+//				let endDate = sessionDates[sessionDates.count - 1]
+//				
+//				let mindfulSample = HKCategorySample(
+//					type: mindfulType,
+//					value: 0,
+//					start: startDate,
+//					end: endDate
+//				)
+//				
+//				healthStore.save(mindfulSample) { success, error in
+//					if let error = error {
+//						print("Error saving mindful minutes: \(error.localizedDescription)")
+//					} else if success {
+//						print("Successfully saved mindful minutes to Health app")
+//					}
+//				}
+//			}
+//		}
 	}
 }

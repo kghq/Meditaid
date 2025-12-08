@@ -15,7 +15,7 @@ struct HourButtonRow: View {
 	private let buttonHaptics = UIImpactFeedbackGenerator(style: .light)
 	
 	var body: some View {
-		HStack(spacing: 10) {
+		HStack(spacing: 12) {
 			ForEach(timerButtons.hours) { value in
 				Button {
 					
@@ -51,7 +51,7 @@ struct MinuteButtonRow: View {
 	private let buttonHaptics = UIImpactFeedbackGenerator(style: .light)
 	
 	var body: some View {
-		HStack(spacing: 7) {
+		HStack(spacing: 9) {
 			ForEach(timerButtons.minutes) { value in
 				Button {
 					

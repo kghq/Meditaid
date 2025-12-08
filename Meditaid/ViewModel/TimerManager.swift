@@ -81,9 +81,6 @@ class TimerManager {
         clock.sessionDates?.append(.now)
 		
 		task?.cancel()
-		
-		// HealthKit
-		healthKitManager.saveMindfulSession(sessionDates: clock.sessionDates)
         
         // ActivityKit
         // activityKitManager.updateActivity(startDate: clock.sessionDates?[0] ?? .now, pauses: clock.pauses, isRunning: false)
