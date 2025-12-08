@@ -9,12 +9,14 @@ import SwiftUI
 
 struct HourButtonRow: View {
 	
+	@State private var timerButtons = TimerButtons()
 	let timerManager: TimerManager
 	@Binding var colors: [Color]
+	private let buttonHaptics = UIImpactFeedbackGenerator(style: .light)
 	
 	var body: some View {
-		HStack(spacing: 17) {
-			ForEach(TimerButtonValue.hours) { value in
+		HStack(spacing: 18) {
+			ForEach(timerButtons.hours) { value in
 				Button {
 					timerManager.clock.hours = value.duration
 					let randomPosition = Int.random(in: 0..<colors.count)
@@ -26,8 +28,9 @@ struct HourButtonRow: View {
 					}
 				} label: {
 					Text(value.label)
-						.foregroundStyle(value.duration == timerManager.clock.timerDuration - timerManager.clock.minutes ? value.color : .white)
-						.opacity(value.duration == timerManager.clock.timerDuration - timerManager.clock.minutes ? 1.0 : 0.7)
+						.foregroundStyle(value.duration == timerManager.clock.timerDuration - timerManager.clock.minutes ? value.color : .primary)
+						.opacity(value.duration == timerManager.clock.timerDuration - timerManager.clock.minutes ? 1.0 : 0.4)
+						.scaleEffect(value.duration == timerManager.clock.timerDuration - timerManager.clock.minutes ? 1.0 : 0.8)
 				}
 			}
 			.lineLimit(1)
@@ -38,12 +41,14 @@ struct HourButtonRow: View {
 
 struct MinuteButtonRow: View {
 	
+	@State private var timerButtons = TimerButtons()
 	let timerManager: TimerManager
 	@Binding var colors: [Color]
+	private let buttonHaptics = UIImpactFeedbackGenerator(style: .light)
 	
 	var body: some View {
-		HStack(spacing: 12) {
-			ForEach(TimerButtonValue.minutes) { value in
+		HStack(spacing: 14) {
+			ForEach(timerButtons.minutes) { value in
 				Button {
 					timerManager.clock.minutes = value.duration
 					let randomPosition = Int.random(in: 0..<colors.count)
@@ -55,8 +60,9 @@ struct MinuteButtonRow: View {
 					}
 				} label: {
 					Text(value.label)
-						.foregroundStyle(value.duration == timerManager.clock.timerDuration - timerManager.clock.hours ? value.color : .white)
-						.opacity(value.duration == timerManager.clock.timerDuration - timerManager.clock.hours ? 1.0 : 0.7)
+						.foregroundStyle(value.duration == timerManager.clock.timerDuration - timerManager.clock.hours ? value.color : .primary)
+						.opacity(value.duration == timerManager.clock.timerDuration - timerManager.clock.hours ? 1.0 : 0.4)
+						.scaleEffect(value.duration == timerManager.clock.timerDuration - timerManager.clock.hours ? 1.0 : 0.8)
 				}
 			}
 			.lineLimit(1)

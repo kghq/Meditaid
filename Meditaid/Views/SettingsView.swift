@@ -46,7 +46,7 @@ struct SettingsView: View {
 						if settings.mode == .zen {
 							ZStack {
 								RoundedRectangle(cornerRadius: 10)
-									.foregroundStyle(.gray)
+									.foregroundStyle(.secondary.opacity(0.6))
 								Image(systemName: "figure.mind.and.body")
 									.font(.system(size: 30))
 							}
@@ -55,19 +55,19 @@ struct SettingsView: View {
 								.font(.system(size: 30, weight: .bold))
 								.fontWeight(.semibold)
 							Text("This mode only measures time, and logs Mindful Minutes to Apple Health, if you choose so.")
-								.padding(.top, 1)
+								// .padding(.top, 1)
 						} else {
 							ZStack {
 								RoundedRectangle(cornerRadius: 10)
-									.foregroundStyle(.gray)
+									.foregroundStyle(.secondary.opacity(0.7))
 								Image(systemName: "stopwatch")
 									.font(.system(size: 30))
 							}
 							.frame(width: 50, height: 50)
 							Text("Timer")
 								.font(.system(size: 30, weight: .bold))
-							Text("Countdown timer will notify you when your session ends, or end silently, if you do that in settings.")
-								.padding(.top, 3)
+							Text("Countdown timer will notify you when your session ends, or end silently, if you do that is your preference.")
+								//.padding(.top, 3)
 						}
 					}
 				}
