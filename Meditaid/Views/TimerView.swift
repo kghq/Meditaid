@@ -22,7 +22,7 @@ struct TimerView: View {
 		if timerManager.clock.hasStarted {
 			return !hideStatusBarOnTap
 		} else {
-			return hideStatusBarOnTap
+			return false
 		}
 	}
 	
@@ -60,7 +60,7 @@ struct TimerView: View {
 //						.padding(.horizontal)
 					MinuteButtonRow(timerManager: timerManager, colors: $timerManager.ringColors.colors)
 				}
-				.font(.system(size: 28, weight: .medium, design: .default))
+				.font(.system(size: 28, weight: .regular, design: .default))
 				.padding(.vertical)
 				.opacity(timerManager.clock.hasStarted ? 0.0 : 1.0)
 				.animation(.default, value: timerManager.clock.isRunning)
@@ -73,7 +73,8 @@ struct TimerView: View {
 						.frame(minWidth: 280, minHeight: 280)
 						.opacity(0.8)
 						.padding(.horizontal)
-						.animation(.default, value: timerManager.clock.hasStarted)
+						.opacity(settings.mode == .timer ? 1.0 : 0.0)
+						// .animation(.default, value: timerManager.clock.hasStarted)
 					
 					if settings.mode == .zen {
 						Text(context.date, format: .timer(countingUpIn: timerManager.clock.zenCountingRange))
@@ -86,7 +87,7 @@ struct TimerView: View {
 			}
 			
 		}
-		.frame(maxWidth: .infinity, maxHeight: 500)
+		.frame(maxWidth: .infinity, maxHeight: 550)
 		.onTapGesture {
 			handleScreenTap()
 		}
@@ -94,9 +95,7 @@ struct TimerView: View {
 		// .preferredColorScheme(.dark)
 		.autoHideHomeIndicator(true)
 		.opacity(timerManager.clock.isRunning ? 0.7 : 1.0)
-		.preferredColorScheme(
-			timerManager.clock.hasStarted ? .dark : .light
-		)
+		.preferredColorScheme(timerManager.clock.hasStarted ? .dark : nil)
 		.statusBarHidden(statusBarHidden)
 		.animation(.default, value: [statusBarHidden, timerManager.clock.hasStarted, timerManager.clock.isRunning])
 		// Settings
@@ -142,6 +141,7 @@ struct TimerView: View {
 							handleButtonHide()
 						}
 						.foregroundStyle(timerManager.clock.hasStarted ? (timerManager.clock.isRunning ? .blue.opacity(0.4) : .green.opacity(0.6)) : .green.opacity(0.9))
+						.disabled(timerManager.clock.timerDuration == 0)
 					}
 					.font(.title3)
 					.bold()
@@ -177,6 +177,7 @@ struct TimerView: View {
 				}
 			}
 		}
+		.toolbarBackgroundVisibility(.hidden)
 		// .toolbarBackgroundVisibility(timerManager.clock.hasStarted ? .hidden : .visible, for: .bottomBar)
 		// .toolbarBackground(Color.purple
 		// .toolbarBackground(.visible, for: .bottomBar)
@@ -232,10 +233,10 @@ struct TimerView: View {
                     autoHide = nil
                 }
             }
-        } else {
-            withAnimation(.default) {
-                hideStatusBarOnTap.toggle()
-            }
+//        } else {
+//            withAnimation(.default) {
+//                hideStatusBarOnTap.toggle()
+//            }
         }
     }
 }

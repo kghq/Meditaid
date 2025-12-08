@@ -12,6 +12,7 @@ struct TimerButtons {
 	var scale = 1.0
 	
 	var minutes: [TimerButtonValue] = [
+		TimerButtonValue(label: "0'", duration: 0, color: .red),
 		TimerButtonValue(label: "5'", duration: 5 * 60, color: .red),
 		TimerButtonValue(label: "10'", duration: 10 * 60, color: .yellow),
 		TimerButtonValue(label: "15'", duration: 15 * 60, color: .orange),
@@ -26,6 +27,7 @@ struct TimerButtons {
 		TimerButtonValue(label: "2h", duration: 2 * 3600, color: .orange),
 		TimerButtonValue(label: "3h", duration: 3 * 3600, color: .green),
 		TimerButtonValue(label: "4h", duration: 4 * 3600, color: .blue),
-		TimerButtonValue(label: "5h", duration: 5 * 3600, color: .cyan)
+		TimerButtonValue(label: "5h", duration: 5 * 3600, color: .cyan),
+		TimerButtonValue(label: "6h", duration: 6 * 3600, color: .cyan)
 	]
 }
