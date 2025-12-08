@@ -37,6 +37,7 @@ struct HourButtonRow: View {
 						.opacity(value.duration == timerManager.clock.timerDuration - timerManager.clock.minutes ? 1.0 : 0.4)
 						.scaleEffect(value.duration == timerManager.clock.timerDuration - timerManager.clock.minutes ? 1.0 : 0.78)
 				}
+				.contentShape(Rectangle())
 				.disabled(value.duration == 0 && timerManager.clock.minutes == 0)
 			}
 			.lineLimit(1)
@@ -77,6 +78,7 @@ struct MinuteButtonRow: View {
 						.opacity(value.duration == timerManager.clock.timerDuration - timerManager.clock.hours ? 1.0 : 0.4)
 						.scaleEffect(value.duration == timerManager.clock.timerDuration - timerManager.clock.hours ? 1.0 : 0.8)
 				}
+				.contentShape(Rectangle())
 				.disabled(value.duration == 0 && timerManager.clock.hours == 0)
 			}
 			.lineLimit(1)
